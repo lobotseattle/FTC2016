@@ -65,7 +65,7 @@ public class DCMotor_omnibot_dpad_touch extends OpMode{
     DcMotor motorD = null;
     DcMotor beaconMotor = null;
     // TouchSensor touchSensor = null;
-    double motorSpeed = 0.1;
+    double motorSpeed = 0.3;
     // double beaconMotorSpeed = 0.1;
 
     // double spindleMotorPower = 0.5;

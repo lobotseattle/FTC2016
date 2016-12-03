@@ -63,7 +63,7 @@ public class DCMotor_omnibot_dpad extends LinearOpMode {
     DcMotor motorD = null;
     // DcMotor motorShooter = null;
     // Sensor touchSensor = null;
-    double motorSpeed = 0.1;
+    double motorSpeed = 0.3;
     // double shooterSpeed = 0.1;
     // boolean touchSensorState = false;
     // double spindleMotorPower = 0.5;
@@ -164,9 +164,9 @@ public class DCMotor_omnibot_dpad extends LinearOpMode {
         }
         if (direction == "NorthWest")
         {
-            motorA.setPower(motorSpeed);
+            motorA.setPower(0);
             motorB.setPower(-motorSpeed);
-            motorC.setPower(motorSpeed);
+            motorC.setPower(0);
             motorD.setPower(motorSpeed);
         }
         if (direction == "West")
@@ -179,9 +179,9 @@ public class DCMotor_omnibot_dpad extends LinearOpMode {
         if (direction == "SouthWest")
         {
             motorA.setPower(-motorSpeed);
-            motorB.setPower(motorSpeed);
+            motorB.setPower(0);
             motorC.setPower(motorSpeed);
-            motorD.setPower(motorSpeed);
+            motorD.setPower(0);
         }
         if (direction == "South")
         {
@@ -192,9 +192,9 @@ public class DCMotor_omnibot_dpad extends LinearOpMode {
         }
         if (direction == "SouthEast")
         {
-            motorA.setPower(-motorSpeed);
+            motorA.setPower(0);
             motorB.setPower(motorSpeed);
-            motorC.setPower(-motorSpeed);
+            motorC.setPower(0);
             motorD.setPower(-motorSpeed);
         }
         if (direction == "East")
@@ -207,9 +207,9 @@ public class DCMotor_omnibot_dpad extends LinearOpMode {
         if (direction == "NorthEast")
         {
             motorA.setPower(motorSpeed);
-            motorB.setPower(-motorSpeed);
+            motorB.setPower(0);
             motorC.setPower(-motorSpeed);
-            motorD.setPower(-motorSpeed);
+            motorD.setPower(0);
         }
         if (direction == "noDirection")
         {
