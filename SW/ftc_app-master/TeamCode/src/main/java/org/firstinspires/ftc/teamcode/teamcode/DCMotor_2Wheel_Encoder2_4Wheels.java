@@ -35,6 +35,7 @@ package org.firstinspires.ftc.teamcode.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 //@Autonomous(name="DCMotor 2Wheel Drive Encoder2 4Wheels", group="Linear Opmode")  // @Autonomous(...) is the other common choice
@@ -44,7 +45,8 @@ public class DCMotor_2Wheel_Encoder2_4Wheels extends LinearOpMode {
     DcMotor motorB = null;
     DcMotor motorC = null;
     DcMotor motorD = null;
-
+    DcMotor motorE = null;
+    TouchSensor touch_sensor = null;
     private ElapsedTime runtime = new ElapsedTime();
 
     static final double COUNTS_PER_MOTOR_REV = 1440;    // eg: TETRIX Motor Encoder
@@ -60,6 +62,8 @@ public class DCMotor_2Wheel_Encoder2_4Wheels extends LinearOpMode {
 
     static final double TIMEOUTINSECONDS = 30;
 
+    double motorSpeed = 0.1;
+
     @Override
     public void runOpMode() {
 
@@ -67,11 +71,8 @@ public class DCMotor_2Wheel_Encoder2_4Wheels extends LinearOpMode {
         motorB = hardwareMap.dcMotor.get("motor_b");
         motorC = hardwareMap.dcMotor.get("motor_c");
         motorD = hardwareMap.dcMotor.get("motor_d");
-
-        motorA.setDirection(DcMotor.Direction.REVERSE); // Set to REVERSE if using AndyMark motors
-        motorB.setDirection(DcMotor.Direction.REVERSE);// Set to FORWARD if using AndyMark motors
-        motorC.setDirection(DcMotor.Direction.REVERSE);
-        motorD.setDirection(DcMotor.Direction.REVERSE);
+        motorE = hardwareMap.dcMotor.get("motor_e");
+        touch_sensor = hardwareMap.touchSensor.get("touch_sensor");
 
         telemetry.addData("Status", "Resetting Encoders");    //
         telemetry.update();
@@ -87,6 +88,11 @@ public class DCMotor_2Wheel_Encoder2_4Wheels extends LinearOpMode {
         motorC.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorD.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
+        boolean ballreleased = true;
+        boolean ballpullstarted = false;
+        boolean triggerIsPressed = false;
+        boolean sensorIsPressed = false;
+
         // Send telemetry message to indicate successful Encoder reset
         telemetry.addData("Path0", "Starting at %7d :%7d : %7d : %7d",
                 motorA.getCurrentPosition(),
@@ -97,6 +103,30 @@ public class DCMotor_2Wheel_Encoder2_4Wheels extends LinearOpMode {
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
+        while (opModeIsActive()) {
+            // double angle = getGamepadAngle(gamepad1.right_stick_x, gamepad1.right_stick_y);
+            // gear motor start
+            if (gamepad2.right_trigger > 0.0) {
+                triggerIsPressed = true;
+            }
+            if (ballpullstarted==false && triggerIsPressed == true) {
+                ballpullstarted = true;
+                motorE.setPower(motorSpeed);
+                triggerIsPressed = false;
+            }
+            if(touch_sensor.isPressed()) {
+                sensorIsPressed = true;
+            }
+            if (ballpullstarted == true && sensorIsPressed == true ) {
+                telemetry.addData("Touch Sensor: ", "Pressed");
+                telemetry.update();
+                motorE.setPower(0);
+                ballreleased = true;
+                ballpullstarted = false;
+                sensorIsPressed = false;
+            }
+
+        }
 
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
@@ -113,9 +143,7 @@ public class DCMotor_2Wheel_Encoder2_4Wheels extends LinearOpMode {
         encoderDrive(DRIVE_SPEED, distanceFor360Degrees/8, -distanceFor360Degrees/8 , 25);  // Go 90 degrees left
         encoderDrive(DRIVE_SPEED, -distanceFor360Degrees/8, distanceFor360Degrees/8, 25);  // Go 90 degrees right
         encoderDrive(DRIVE_SPEED, -12, -12 , 25);  // Go reverse straight 12 inches*/
-
-
-    }
+}
 
     public void moveToDirection(String direction, double motorSpeed, double distance) {
         if (direction == "North") {
@@ -142,7 +170,6 @@ public class DCMotor_2Wheel_Encoder2_4Wheels extends LinearOpMode {
         }
         if (direction == "NorthEast") {
             moveMotor(distance, -distance, -distance, -distance, motorSpeed);
-
         }
         if (direction == "noDirection") {
             moveMotor(0, 0, 0, 0, motorSpeed);
@@ -181,6 +208,22 @@ public class DCMotor_2Wheel_Encoder2_4Wheels extends LinearOpMode {
         }
     }
 
+    public void moveMotor(String motorName, double motorSpeed, double distance ) {
+        while (distance >= 0) {
+            if (motorName.equalsIgnoreCase("motorA")) {
+                motorA.setPower(motorSpeed);
+            } else if (motorName.equalsIgnoreCase("motorB")) {
+                motorB.setPower(motorSpeed);
+            } else if (motorName.equalsIgnoreCase("motorC")) {
+                motorC.setPower(motorSpeed);
+            } else if (motorName.equalsIgnoreCase("motorD")) {
+                motorD.setPower(motorSpeed);
+            } else if (motorName.equalsIgnoreCase("motorE")) {
+                motorE.setPower(motorSpeed);
+            }
+        }
+    }
+
     public void moveMotor(double motorADistance, double motorBDistance, double motorCDistance, double motorDDistance, double speed) {
         encoderDrive(motorADistance, motorBDistance, motorCDistance, motorDDistance, speed, 30000);
     }
@@ -193,7 +236,7 @@ public class DCMotor_2Wheel_Encoder2_4Wheels extends LinearOpMode {
             double motorSpeed,
             double timeoutS){
 
-}
+    }
 
     public void encoderDrive(
             double motorADistance, double motorBDistance, double motorCDistance, double motorDDistance, double speed, double timeoutS) {

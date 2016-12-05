@@ -52,7 +52,8 @@ public class DCMotor_omnibot_gamepad_auto_test extends DCMotor_2Wheel_Encoder2_4
 
     double motorSpeed = 0.1;
     @Override
-    public void startActions() {
+    public void startActions()
+    {
         // run until the end of the match (driver presses STOP)
        moveToDirection("East", motorSpeed, 12);
     }

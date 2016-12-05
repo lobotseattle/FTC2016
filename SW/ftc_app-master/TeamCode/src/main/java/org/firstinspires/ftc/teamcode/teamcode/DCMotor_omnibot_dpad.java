@@ -37,19 +37,15 @@ import android.hardware.Sensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 /**
- * This file contains an minimal example of a Linear "OpMode". An OpMode is a 'program' that runs in either
- * the autonomous or the teleop period of an FTC match. The names of OpModes appear on the menu
- * of the FTC Driver Station. When an selection is made from the menu, the corresponding OpMode
- * class is instantiated on the Robot Controller and executed.
- *
- * This particular OpMode just executes a basic Tank Drive Teleop for a PushBot
- * It includes all the skeletal structure that all linear OpModes contain.
- *
- * Use Android Studios to Copy this Class, and Paste it into your team's code folder with a new name.
- * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
+ Implements 4WD robot navigtion using omni wheels, positioned 90 degrees to each other.
+ Implements rack and gear based ball throw system, with a limit switch simulated by push button sensor
+ This is for tele op mode.
+ Uses 6 motors, 1 push button sensor.
  */
 
 @TeleOp(name="DCMotor omnibot gamepad dpad", group="Linear Opmode")  // @Autonomous(...) is the other common choice
@@ -57,24 +53,29 @@ public class DCMotor_omnibot_dpad extends LinearOpMode {
 
     /* Declare OpMode members. */
     private ElapsedTime runtime = new ElapsedTime();
+
+    // The 4 wheels that enable navigation
     DcMotor motorA = null;
     DcMotor motorB = null;
     DcMotor motorC = null;
     DcMotor motorD = null;
-    // DcMotor motorShooter = null;
-    // Sensor touchSensor = null;
-    double motorSpeed = 0.3;
-    // double shooterSpeed = 0.1;
-    // boolean touchSensorState = false;
-    // double spindleMotorPower = 0.5;
-    // DcMotor shooterMotor = null;
-    // double shooterMotorPower = 0.1;
 
-    @Override
-    public void runOpMode() {
-        telemetry.addData("Status", "Initialized");
-        telemetry.update();
+    // set the speed for all the wheels
+    double motorSpeed = 0.1; // this is the motor speed for the launching motor/ motor E
 
+    // this is the gear that controls the ball throw system
+    DcMotor motorE = null;
+    double gearMotorSpeed = 0.1;
+
+    // this touch sensor controls ball throw system
+    TouchSensor touch_sensor = null;
+    boolean ballreleased = true;
+    boolean ballpullstarted = false; // variable for if the ball
+    boolean triggerIsPressed = false; // variable for if the right trigger was pressed
+    boolean sensorIsPressed = false; // variable for if the touch sensor is pressed
+
+    public void initialize()
+    {
         /* eg: Initialize the hardware variables. Note that the strings used here as parameters
          * to 'get' must correspond to the names assigned during the robot configuration
          * step (using the FTC Robot Controller app on the phone).
@@ -83,30 +84,76 @@ public class DCMotor_omnibot_dpad extends LinearOpMode {
         motorB = hardwareMap.dcMotor.get("motor_b");
         motorC = hardwareMap.dcMotor.get("motor_c");
         motorD = hardwareMap.dcMotor.get("motor_d");
+        motorE = hardwareMap.dcMotor.get("motor_e");
+        touch_sensor = hardwareMap.touchSensor.get("touch_sensor");
 
-        // eg: Set the drive motor directions:
+        // eg: Set the driv
+        // e motor directions:
         // "Reverse" the motor that runs backwards when connected directly to the battery
         motorA.setDirection(DcMotor.Direction.REVERSE); // Set to FORWARD if using AndyMark motors
         motorB.setDirection(DcMotor.Direction.REVERSE);
         motorC.setDirection(DcMotor.Direction.REVERSE);
         motorD.setDirection(DcMotor.Direction.REVERSE);
+        motorE.setDirection(DcMotor.Direction.REVERSE);
 
-        // boolean oldRBPressed = false;
-        // boolean newRBPressed = false;
-        // boolean isSpindleMotorOn = false;
+        ballreleased = true;
+        ballpullstarted = false; // variable for if the ball
+        triggerIsPressed = false; // variable for if the right trigger was pressed
+        sensorIsPressed = false; // variable for if the touch sensor is pressed
+    }
+
+    @Override
+    public void runOpMode()
+    {
+        telemetry.addData("Status", "Initialized");
+        telemetry.update();
+
+        initialize();
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
         // run until the end of the match (driver presses STOP)
-        while (opModeIsActive()) {
+        while (opModeIsActive())
+        {
+            // gear motor start and stop
+            if (gamepad2.right_trigger > 0.0)
+            {
+                triggerIsPressed = true;
+            }
 
-                // double angle = getGamepadAngle(gamepad1.right_stick_x, gamepad1.right_stick_y);
-                String direction = getDirectionFromDpad();
-                moveToDirection(direction);
+            if (ballpullstarted == false && triggerIsPressed == true)
+            {
+                ballpullstarted = true;
+                triggerIsPressed = false;
+                motorE.setPower(gearMotorSpeed);
+            }
+
+            if (touch_sensor.isPressed())
+            {
+                sensorIsPressed = true;
+            }
+
+            if (ballpullstarted == true && sensorIsPressed == true)
+            {
+                telemetry.addData("Touch Sensor: ", "Pressed");
+                telemetry.update();
+                ballreleased = true;
+                ballpullstarted = false;
+                sensorIsPressed = false;
+                motorE.setPower(0);
+            }
+
+            // robot navigation
+            String direction = getDirectionFromDpad();
+            moveToDirection (direction);
         }
     }
 
+    /*
+     This method gets the direction from the dpad
+     Eight directions: North, South, East, West, North [ East & West], South [East & West]
+     */
     public String getDirectionFromDpad ()
     {
         if (gamepad1.dpad_up && gamepad1.dpad_left)
@@ -153,6 +200,12 @@ public class DCMotor_omnibot_dpad extends LinearOpMode {
         }
         else return "noDirection";
     }
+
+    /*
+    This method moves the robot in the specified direction.
+    The net direction of the movement is FNet on all the 4 motors
+     */
+
     public void moveToDirection (String direction)
     {
         if (direction == "North")
@@ -234,12 +287,18 @@ public class DCMotor_omnibot_dpad extends LinearOpMode {
         }
     }
 
-    public void moveToDirection (String direction, double distance) {
+    public void moveToDirection (String direction, double distance)
+    {
 
     }
 
-    public void moveMotor(String motorName, double motorSpeed, double distance ) {
-        while(distance >= 0 ) {
+    /*
+    Moves one motor. Used in diagnostics.
+     */
+    public void moveMotor(String motorName, double motorSpeed, double distance )
+    {
+        while(distance >= 0 )
+        {
             if(motorName.equalsIgnoreCase("motorA")) {
                 motorA.setPower(motorSpeed);
             } else if(motorName.equalsIgnoreCase("motorB")) {
@@ -249,17 +308,11 @@ public class DCMotor_omnibot_dpad extends LinearOpMode {
             } else if(motorName.equalsIgnoreCase("motorD")) {
                 motorD.setPower(motorSpeed);
             }
+            else if(motorName.equalsIgnoreCase("motorE")) {
+                motorE.setPower(motorSpeed);
+            }
 
         }
-
     }
 
 }
-
-
-
-
-
-
-
-

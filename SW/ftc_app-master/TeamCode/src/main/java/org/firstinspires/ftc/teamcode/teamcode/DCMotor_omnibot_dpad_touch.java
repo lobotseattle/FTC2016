@@ -73,7 +73,8 @@ public class DCMotor_omnibot_dpad_touch extends OpMode{
     // double shooterMotorPower = 0.1;
 
     @Override
-    public void init() {
+    public void init()
+    {
         motorA = hardwareMap.dcMotor.get("motor_a");
         motorB = hardwareMap.dcMotor.get("motor_b");
         motorC = hardwareMap.dcMotor.get("motor_c");
@@ -88,8 +89,10 @@ public class DCMotor_omnibot_dpad_touch extends OpMode{
         motorC.setDirection(DcMotor.Direction.REVERSE);
         motorD.setDirection(DcMotor.Direction.REVERSE);
     }
+
     @Override
-    public void loop() {
+    public void loop()
+    {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
@@ -175,6 +178,7 @@ public class DCMotor_omnibot_dpad_touch extends OpMode{
         }
         else return "noDirection";
     }
+
     public void moveToDirection (String direction)
     {
         if (direction == "North")
