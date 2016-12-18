@@ -46,7 +46,7 @@ public class Robot_B2_CornerVertex extends DCMotor_2Wheel_Encoder2_4Wheels {
     @Override
     public void startActions() {
         double motorSpeed = 0.1;
-        moveToDirection("East", motorSpeed, 12);
+        moveToDirection("East", motorSpeed, 4);
 
 /*
         forward(18);

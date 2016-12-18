@@ -138,7 +138,7 @@ public class DCMotor_2Wheel_Encoder2_OneWheel extends LinearOpMode {
     public void turnRight(double degrees)
     {
         double distanceForDegrees = calculateDistanceFromDegrees(degrees);
-        encoderDrive("motorA", DRIVE_SPEED, -distanceForDegrees/2, 25);
+        encoderDrive("frontLeft", DRIVE_SPEED, -distanceForDegrees/2, 25);
     }*/
 
     public void encoderDrive(

@@ -36,7 +36,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 @Autonomous(name="Robot_B1_CenterVertex", group="Linear Opmode")  // @Autonomous(...) is the other common choice
 //public class Robot_B1_CenterVertex extends DCMotor_2Wheel_Encoder2_BothWheelsTurn {
-public class Robot_B1_CenterVertex extends DCMotor_2Wheel_Encoder2_4Wheels {
+public class
+Robot_B1_CenterVertex extends DCMotor_2Wheel_Encoder2_4Wheels {
 
     @Override
     public void runOpMode() {
@@ -46,7 +47,7 @@ public class Robot_B1_CenterVertex extends DCMotor_2Wheel_Encoder2_4Wheels {
     @Override
     public void startActions() {
         double motorSpeed = 0.1;
-        moveToDirection("East", motorSpeed, 12);
+        moveToDirection("East", motorSpeed, 4);
         /*forward(18);
         turnLeft(45);
         shooterOn(1);

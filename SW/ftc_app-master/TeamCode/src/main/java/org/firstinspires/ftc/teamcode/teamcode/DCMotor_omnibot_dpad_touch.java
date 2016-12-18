@@ -266,13 +266,13 @@ public class DCMotor_omnibot_dpad_touch extends OpMode{
 
     public void moveMotor(String motorName, double motorSpeed, double distance ) {
         while(distance >= 0 ) {
-            if(motorName.equalsIgnoreCase("motorA")) {
+            if(motorName.equalsIgnoreCase("frontLeft")) {
                 motorA.setPower(motorSpeed);
-            } else if(motorName.equalsIgnoreCase("motorB")) {
+            } else if(motorName.equalsIgnoreCase("frontRight")) {
                 motorB.setPower(motorSpeed);
-            } else if(motorName.equalsIgnoreCase("motorC")) {
+            } else if(motorName.equalsIgnoreCase("backRight")) {
                 motorC.setPower(motorSpeed);
-            } else if(motorName.equalsIgnoreCase("motorD")) {
+            } else if(motorName.equalsIgnoreCase("backLeft")) {
                 motorD.setPower(motorSpeed);
             }
 

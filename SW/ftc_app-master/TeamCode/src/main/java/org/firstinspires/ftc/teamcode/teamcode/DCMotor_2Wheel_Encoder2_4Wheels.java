@@ -62,7 +62,7 @@ public class DCMotor_2Wheel_Encoder2_4Wheels extends LinearOpMode {
 
     static final double TIMEOUTINSECONDS = 30;
 
-    double motorSpeed = 0.1;
+    double motorSpeed = 0.5;
 
     @Override
     public void runOpMode() {
@@ -81,12 +81,14 @@ public class DCMotor_2Wheel_Encoder2_4Wheels extends LinearOpMode {
         motorB.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorC.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorD.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorE.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         idle();
 
         motorA.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorC.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motorD.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        motorE.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         boolean ballreleased = true;
         boolean ballpullstarted = false;
@@ -94,16 +96,26 @@ public class DCMotor_2Wheel_Encoder2_4Wheels extends LinearOpMode {
         boolean sensorIsPressed = false;
 
         // Send telemetry message to indicate successful Encoder reset
-        telemetry.addData("Path0", "Starting at %7d :%7d : %7d : %7d",
-                motorA.getCurrentPosition(),
-                motorB.getCurrentPosition(),
-                motorC.getCurrentPosition(),
-                motorD.getCurrentPosition());
+        telemetry.addData
+        (
+            "Path0", "Starting at %7d :%7d : %7d : %7d : %7d",
+            motorA.getCurrentPosition(),
+            motorB.getCurrentPosition(),
+            motorC.getCurrentPosition(),
+            motorD.getCurrentPosition(),
+            motorE.getCurrentPosition()
+        );
+
         telemetry.update();
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
-        while (opModeIsActive()) {
+        telemetry.addData("Started","Auto mode");
+        telemetry.update();
+
+
+        while (opModeIsActive())
+        {
             // double angle = getGamepadAngle(gamepad1.right_stick_x, gamepad1.right_stick_y);
             // gear motor start
             if (gamepad2.right_trigger > 0.0) {
@@ -125,63 +137,70 @@ public class DCMotor_2Wheel_Encoder2_4Wheels extends LinearOpMode {
                 ballpullstarted = false;
                 sensorIsPressed = false;
             }
-
+            startActions();
         }
 
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
         //encoderDrive(DRIVE_SPEED,  12,  12, 25);  // S1: Forward 47 Inches with 5 Sec timeout
 
-        startActions();
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
     }
 
-    public void startActions() {
+    public void startActions()
+    {
+        telemetry.addData("StartActions", "Base class Called");
+        telemetry.update();
         /*encoderDrive(DRIVE_SPEED, 12, 12 , 25);  // Go forward straight 12 inches
         encoderDrive(DRIVE_SPEED, distanceFor360Degrees/8, -distanceFor360Degrees/8 , 25);  // Go 90 degrees left
         encoderDrive(DRIVE_SPEED, -distanceFor360Degrees/8, distanceFor360Degrees/8, 25);  // Go 90 degrees right
         encoderDrive(DRIVE_SPEED, -12, -12 , 25);  // Go reverse straight 12 inches*/
-}
+    }
 
     public void moveToDirection(String direction, double motorSpeed, double distance) {
         if (direction == "North") {
             moveMotor(distance, -distance, -distance, distance, motorSpeed);
         }
         if (direction == "NorthWest") {
-            moveMotor(distance, -distance, distance, distance, motorSpeed);
+            moveMotor(0, -distance, 0, distance, motorSpeed);
         }
         if (direction == "West") {
             moveMotor(-distance, -distance, distance, distance, motorSpeed);
         }
         if (direction == "SouthWest") {
-            moveMotor(-distance, distance, distance, distance, motorSpeed);
+            moveMotor(-distance, 0, distance, 0, motorSpeed);
         }
         if (direction == "South") {
             moveMotor(-distance, distance, distance, -distance, motorSpeed);
         }
         if (direction == "SouthEast") {
-            moveMotor(-distance, distance, -distance, -distance, motorSpeed);
+            moveMotor(0, distance, 0, -distance, motorSpeed);
         }
         if (direction == "East") {
             moveMotor(distance, distance, -distance, -distance, motorSpeed);
-            //moveMotor(0, distance, -distance, -0, motorSpeed);
         }
         if (direction == "NorthEast") {
-            moveMotor(distance, -distance, -distance, -distance, motorSpeed);
+            moveMotor(distance, 0, -distance, 0, motorSpeed);
         }
         if (direction == "noDirection") {
             moveMotor(0, 0, 0, 0, motorSpeed);
         }
+        if (direction == "Clockwise") {
+            moveMotor(distance,distance,distance,distance, motorSpeed);
+        }
+        if (direction == "CounterClockWise") {
+            moveMotor(-distance,-distance,-distance,-distance,motorSpeed);
+        }
     }
 
-    public void moveToDirection_old(String direction, double motorSpeed, double distance) {
-        if (direction == "North") {
-            moveMotor(motorSpeed, -motorSpeed, -motorSpeed, motorSpeed, distance);
-        }
-        if (direction == "NorthWest") {
-            moveMotor(motorSpeed, -motorSpeed, motorSpeed, motorSpeed, distance);
+    //public void moveToDirection_old(String direction, double motorSpeed, double distance) {
+        //if (direction == "North") {
+            //moveMotor(motorSpeed, -motorSpeed, -motorSpeed, motorSpeed, distance);
+        /*}
+       // if (direction == "NorthWest") {
+         //   moveMotor(motorSpeed, -motorSpeed, motorSpeed, motorSpeed, distance);
         }
         if (direction == "West") {
             moveMotor(-motorSpeed, -motorSpeed, motorSpeed, motorSpeed, distance);
@@ -206,17 +225,17 @@ public class DCMotor_2Wheel_Encoder2_4Wheels extends LinearOpMode {
         if (direction == "noDirection") {
             moveMotor(0, 0, 0, 0, distance);
         }
-    }
+    }*/
 
     public void moveMotor(String motorName, double motorSpeed, double distance ) {
         while (distance >= 0) {
-            if (motorName.equalsIgnoreCase("motorA")) {
+            if (motorName.equalsIgnoreCase("frontLeft")) {
                 motorA.setPower(motorSpeed);
-            } else if (motorName.equalsIgnoreCase("motorB")) {
+            } else if (motorName.equalsIgnoreCase("frontRight")) {
                 motorB.setPower(motorSpeed);
-            } else if (motorName.equalsIgnoreCase("motorC")) {
+            } else if (motorName.equalsIgnoreCase("backRight")) {
                 motorC.setPower(motorSpeed);
-            } else if (motorName.equalsIgnoreCase("motorD")) {
+            } else if (motorName.equalsIgnoreCase("backLeft")) {
                 motorD.setPower(motorSpeed);
             } else if (motorName.equalsIgnoreCase("motorE")) {
                 motorE.setPower(motorSpeed);
@@ -247,9 +266,11 @@ public class DCMotor_2Wheel_Encoder2_4Wheels extends LinearOpMode {
         int newTargetD = 0;
 
         // Ensure that the opmode is still active
-        if (opModeIsActive()) {
+        if (opModeIsActive())
+        {
 
-            if(motorADistance != 0) {
+            if(motorADistance != 0)
+            {
                 // Determine new target position, and pass to motor controller
                 newTargetA = motorA.getCurrentPosition() + (int) (motorADistance * COUNTS_PER_INCH);
                 motorA.setTargetPosition(newTargetA);
@@ -257,19 +278,22 @@ public class DCMotor_2Wheel_Encoder2_4Wheels extends LinearOpMode {
                 motorA.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             }
 
-            if(motorBDistance != 0) {
+            if(motorBDistance != 0)
+            {
                 newTargetB = motorB.getCurrentPosition() + (int) (motorBDistance * COUNTS_PER_INCH);
                 motorB.setTargetPosition(newTargetB);
                 motorB.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             }
 
-            if(motorCDistance != 0) {
+            if(motorCDistance != 0)
+            {
                 newTargetC = motorC.getCurrentPosition() + (int) (motorCDistance * COUNTS_PER_INCH);
                 motorC.setTargetPosition(newTargetC);
                 motorC.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             }
 
-            if(motorDDistance != 0) {
+            if(motorDDistance != 0)
+            {
                 newTargetD = motorD.getCurrentPosition() + (int) (motorDDistance * COUNTS_PER_INCH);
                 motorD.setTargetPosition(newTargetD);
                 motorD.setMode(DcMotor.RunMode.RUN_TO_POSITION);
@@ -277,23 +301,28 @@ public class DCMotor_2Wheel_Encoder2_4Wheels extends LinearOpMode {
 
             // reset the timeout time and start motion.
             runtime.reset();
-            if(motorADistance != 0) {
+            if(motorADistance != 0)
+            {
                 motorA.setPower(Math.abs(speed));
             }
-            if(motorBDistance != 0) {
+            if(motorBDistance != 0)
+            {
                 motorB.setPower(Math.abs(speed));
             }
-            if(motorCDistance != 0) {
+            if(motorCDistance != 0)
+            {
                 motorC.setPower(Math.abs(speed));
             }
-            if(motorDDistance != 0) {
+            if(motorDDistance != 0)
+            {
                 motorD.setPower(Math.abs(speed));
             }
             // keep looping while we are still active, and there is time left, and both motors are running.
             while (opModeIsActive() &&
                     (runtime.seconds() < timeoutS) &&
                     (motorA.isBusy() || motorB.isBusy() || motorC.isBusy() || motorD.isBusy())
-                    ) {
+                    )
+            {
 
                 // Display it for the driver.
                 telemetry.addData("Path1",  "RUNNING - to %7d : %7d : %7d : %7d", newTargetA, newTargetB, newTargetC, newTargetD);
@@ -317,6 +346,25 @@ public class DCMotor_2Wheel_Encoder2_4Wheels extends LinearOpMode {
             motorB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             motorC.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             motorD.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
+    }
+
+    public void moveMotorDistance(DcMotor motor, double distanceInInches, double motorSpeed)
+    {
+        if (motor != null)
+        {
+            int targetPosition = motor.getCurrentPosition() + (int) (distanceInInches * COUNTS_PER_INCH);
+            motor.setTargetPosition(targetPosition);
+            motor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            motor.setPower(Math.abs(motorSpeed));
+            while (opModeIsActive() &&
+                    (runtime.seconds() < 30000) &&
+                    (motor.isBusy() )
+                    )
+            {
+                telemetry.addData("Motor Test",  "RUNNING - to %7d", targetPosition);
+                telemetry.update();
+            }
         }
     }
 }

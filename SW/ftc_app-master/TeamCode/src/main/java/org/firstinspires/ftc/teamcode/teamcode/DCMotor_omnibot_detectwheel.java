@@ -52,7 +52,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  */
 
 @TeleOp(name="DCMotor omnibot gamepad detectwheel", group="Linear Opmode")  // @Autonomous(...) is the other common choice
-public class DCMotor_omnibot_detectwheel extends LinearOpMode {
+public class DCMotor_omnibot_detectwheel extends LinearOpMode
+{
 
     /* Declare OpMode members. */
     private ElapsedTime runtime = new ElapsedTime();
@@ -60,6 +61,7 @@ public class DCMotor_omnibot_detectwheel extends LinearOpMode {
     DcMotor motorB = null;
     DcMotor motorC = null;
     DcMotor motorD = null;
+    DcMotor motorE = null;
     double motorSpeed = 0.1;
     // double spindleMotorPower = 0.5;
     // DcMotor shooterMotor = null;
@@ -78,6 +80,7 @@ public class DCMotor_omnibot_detectwheel extends LinearOpMode {
         motorB = hardwareMap.dcMotor.get("motor_b");
         motorC = hardwareMap.dcMotor.get("motor_c");
         motorD = hardwareMap.dcMotor.get("motor_d");
+        motorE = hardwareMap.dcMotor.get("motor_e");
 
         // eg: Set the drive motor directions:
         // "Reverse" the motor that runs backwards when connected directly to the battery
@@ -85,6 +88,7 @@ public class DCMotor_omnibot_detectwheel extends LinearOpMode {
         motorB.setDirection(DcMotor.Direction.REVERSE);
         motorC.setDirection(DcMotor.Direction.REVERSE);
         motorD.setDirection(DcMotor.Direction.REVERSE);
+        motorE.setDirection(DcMotor.Direction.REVERSE);
 
         // boolean oldRBPressed = false;
         // boolean newRBPressed = false;
@@ -94,7 +98,8 @@ public class DCMotor_omnibot_detectwheel extends LinearOpMode {
         waitForStart();
 
         // run until the end of the match (driver presses STOP)
-        while (opModeIsActive()) {
+        while (opModeIsActive())
+        {
             telemetry.addData("status", "Spinning motor A");
             telemetry.update();
             motorA.setPower(motorSpeed);
@@ -118,14 +123,20 @@ public class DCMotor_omnibot_detectwheel extends LinearOpMode {
             motorD.setPower(motorSpeed);
             sleep(4000);
 
+            telemetry.addData("status", "Spinning motor E");
+            telemetry.update();
+            motorD.setPower(0);
+            motorE.setPower(motorSpeed);
+            sleep(4000);
+
             break;
 
             /*if (gamepad1.right_stick_x == 0 && gamepad1.right_stick_y == 0)
             {
-                motorA.setPower(0);
-                motorB.setPower(0);
-                motorC.setPower(0);
-                motorD.setPower(0);
+                frontLeft.setPower(0);
+                frontRight.setPower(0);
+                backRight.setPower(0);
+                backLeft.setPower(0);
             }
             else {
                 double angle = getGamepadAngle(gamepad1.right_stick_x, gamepad1.right_stick_y);
@@ -274,13 +285,13 @@ public class DCMotor_omnibot_detectwheel extends LinearOpMode {
 
     public void moveMotor(String motorName, double motorSpeed, double distance ) {
         while(distance >= 0 ) {
-            if(motorName.equalsIgnoreCase("motorA")) {
+            if(motorName.equalsIgnoreCase("frontLeft")) {
                 motorA.setPower(motorSpeed);
-            } else if(motorName.equalsIgnoreCase("motorB")) {
+            } else if(motorName.equalsIgnoreCase("frontRight")) {
                 motorB.setPower(motorSpeed);
-            } else if(motorName.equalsIgnoreCase("motorC")) {
+            } else if(motorName.equalsIgnoreCase("backRight")) {
                 motorC.setPower(motorSpeed);
-            } else if(motorName.equalsIgnoreCase("motorD")) {
+            } else if(motorName.equalsIgnoreCase("backLeft")) {
                 motorD.setPower(motorSpeed);
             }
 

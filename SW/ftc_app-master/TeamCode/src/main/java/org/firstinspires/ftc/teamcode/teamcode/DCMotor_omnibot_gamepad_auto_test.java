@@ -48,14 +48,41 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
  */
 
 @Autonomous(name="DCMotor omnibot gamepad auto test", group="Linear Opmode")
-public class DCMotor_omnibot_gamepad_auto_test extends DCMotor_2Wheel_Encoder2_4Wheels {
+public class DCMotor_omnibot_gamepad_auto_test extends DCMotor_2Wheel_Encoder2_4Wheels
+{
+    boolean state = false;
 
-    double motorSpeed = 0.1;
+    double motorSpeed = 0.5;
     @Override
     public void startActions()
     {
-        // run until the end of the match (driver presses STOP)
-       moveToDirection("East", motorSpeed, 12);
+
+        telemetry.addData("StartActions", "Derived class Called");
+        telemetry.update();
+        double distance = 6;
+        if (state) return;
+        for (int i=1; i <= 1; i++)
+        {
+            double currentMotorSpeed = motorSpeed*i;
+            // run until the end of the match (driver presses STOP)
+            moveMotorDistance(motorE, distance, currentMotorSpeed);
+            moveMotorDistance(motorE, -distance, currentMotorSpeed);
+        }
+        state=true;
+
+        
+       // moveToDirection("Clockwise", motorSpeed, distance);
+        //moveToDirection("CounterClockWise", motorSpeed,distance);
+    /*
+        moveToDirection("East", motorSpeed, distance);
+        moveToDirection("West", motorSpeed, distance);
+        moveToDirection("North", motorSpeed, distance);
+        moveToDirection("South", motorSpeed,distance);
+        moveToDirection("SouthWest", motorSpeed, distance);
+        moveToDirection("NorthWest", motorSpeed,distance);
+        moveToDirection("SouthEast", motorSpeed,distance);
+        moveToDirection("SouthWest", motorSpeed,distance);
+    */
     }
 
 }
