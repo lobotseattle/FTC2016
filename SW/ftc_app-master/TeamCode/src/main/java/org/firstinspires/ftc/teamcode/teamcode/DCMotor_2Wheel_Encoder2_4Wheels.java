@@ -50,7 +50,7 @@ public class DCMotor_2Wheel_Encoder2_4Wheels extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
 
     static final double COUNTS_PER_MOTOR_REV = 1440;    // eg: TETRIX Motor Encoder
-    static final double DRIVE_GEAR_REDUCTION = 2.0;     // This is < 1.0 if geared UP
+    static final double DRIVE_GEAR_REDUCTION = 1.0;     // This is < 1.0 if geared UP
     static final double WHEEL_DIAMETER_INCHES = 4.0; //4.0 ;     // For figuring circumference
     static final double PI = 3.1415;
     static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
@@ -317,6 +317,8 @@ public class DCMotor_2Wheel_Encoder2_4Wheels extends LinearOpMode {
             {
                 motorD.setPower(Math.abs(speed));
             }
+
+            /*
             // keep looping while we are still active, and there is time left, and both motors are running.
             while (opModeIsActive() &&
                     (runtime.seconds() < timeoutS) &&
@@ -334,7 +336,7 @@ public class DCMotor_2Wheel_Encoder2_4Wheels extends LinearOpMode {
 
               telemetry.update();
             }
-
+            */
             // Stop all motion;
             motorA.setPower(0);
             motorB.setPower(0);

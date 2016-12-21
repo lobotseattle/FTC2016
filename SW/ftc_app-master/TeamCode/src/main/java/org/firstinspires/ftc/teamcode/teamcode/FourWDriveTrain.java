@@ -58,7 +58,7 @@ public class FourWDriveTrain
     static final double radiusOfRobotRotationPath = 14;
     private double distanceFor360Degrees = 2 * PI * radiusOfRobotRotationPath;
 
-    static final double TIMEOUTINSECONDS = 30;
+    //static final double TIMEOUTINSECONDS = 30;
 
     double motorSpeed = 0.5;
 
@@ -80,8 +80,8 @@ public class FourWDriveTrain
 
     public void init()
     {
-        telemetry.addData("Status", "Resetting Encoders");    //
-        telemetry.update();
+        //telemetry.addData("Status", "Resetting Encoders");    //
+        //telemetry.update();
         Set <String> motorNames = motorHashMap.keySet();
 
         for (String motorName: motorNames)
