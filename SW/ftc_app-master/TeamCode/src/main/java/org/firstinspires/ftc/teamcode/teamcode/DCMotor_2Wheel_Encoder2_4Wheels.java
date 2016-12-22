@@ -59,6 +59,8 @@ public class DCMotor_2Wheel_Encoder2_4Wheels extends LinearOpMode {
     static final double TURN_SPEED = 1.0;
     static final double radiusOfRobotRotationPath = 14;
     private double distanceFor360Degrees = 2 * PI * radiusOfRobotRotationPath;
+    static final double positionErrorBuffer = COUNTS_PER_INCH / 10;
+    static final double vectorFactorMultiplier = Math.sqrt(2);
 
     static final double TIMEOUTINSECONDS = 30;
 
@@ -159,27 +161,30 @@ public class DCMotor_2Wheel_Encoder2_4Wheels extends LinearOpMode {
         encoderDrive(DRIVE_SPEED, -12, -12 , 25);  // Go reverse straight 12 inches*/
     }
 
-    public void moveToDirection(String direction, double motorSpeed, double distance) {
+    public void moveToDirection(String direction, double motorSpeed, double distance)
+    {
+        double newdistance = distance / vectorFactorMultiplier;
+
         if (direction == "North") {
-            moveMotor(distance, -distance, -distance, distance, motorSpeed);
+            moveMotor(newdistance, -newdistance, -newdistance, newdistance, motorSpeed);
         }
         if (direction == "NorthWest") {
             moveMotor(0, -distance, 0, distance, motorSpeed);
         }
         if (direction == "West") {
-            moveMotor(-distance, -distance, distance, distance, motorSpeed);
+            moveMotor(-newdistance, -newdistance, newdistance, newdistance, motorSpeed);
         }
         if (direction == "SouthWest") {
             moveMotor(-distance, 0, distance, 0, motorSpeed);
         }
         if (direction == "South") {
-            moveMotor(-distance, distance, distance, -distance, motorSpeed);
+            moveMotor(-newdistance, newdistance, newdistance, -newdistance, motorSpeed);
         }
         if (direction == "SouthEast") {
             moveMotor(0, distance, 0, -distance, motorSpeed);
         }
         if (direction == "East") {
-            moveMotor(distance, distance, -distance, -distance, motorSpeed);
+            moveMotor(newdistance, newdistance, -newdistance, -newdistance, motorSpeed);
         }
         if (direction == "NorthEast") {
             moveMotor(distance, 0, -distance, 0, motorSpeed);
@@ -318,11 +323,12 @@ public class DCMotor_2Wheel_Encoder2_4Wheels extends LinearOpMode {
                 motorD.setPower(Math.abs(speed));
             }
 
-            /*
+
             // keep looping while we are still active, and there is time left, and both motors are running.
             while (opModeIsActive() &&
                     (runtime.seconds() < timeoutS) &&
-                    (motorA.isBusy() || motorB.isBusy() || motorC.isBusy() || motorD.isBusy())
+                    //(motorA.isBusy() || motorB.isBusy() || motorC.isBusy() || motorD.isBusy())
+                    (isMotorBusy(motorA) || isMotorBusy(motorB) || isMotorBusy(motorC) || isMotorBusy(motorD))
                     )
             {
 
@@ -336,7 +342,7 @@ public class DCMotor_2Wheel_Encoder2_4Wheels extends LinearOpMode {
 
               telemetry.update();
             }
-            */
+
             // Stop all motion;
             motorA.setPower(0);
             motorB.setPower(0);
@@ -348,9 +354,23 @@ public class DCMotor_2Wheel_Encoder2_4Wheels extends LinearOpMode {
             motorB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             motorC.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             motorD.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
         }
     }
 
+    private boolean isMotorBusy (DcMotor motor)
+    {
+        boolean returnValue = false;
+        if (motor != null )
+        {
+            int currentPosition = motor.getCurrentPosition();
+            int targetPosition = motor.getTargetPosition();
+            int diff = currentPosition - targetPosition;
+
+            if (Math.abs(diff) > positionErrorBuffer ) returnValue = true;
+        }
+        return returnValue;
+    }
     public void moveMotorDistance(DcMotor motor, double distanceInInches, double motorSpeed)
     {
         if (motor != null)

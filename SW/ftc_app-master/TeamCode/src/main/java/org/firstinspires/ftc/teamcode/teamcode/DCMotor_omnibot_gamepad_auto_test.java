@@ -59,18 +59,35 @@ public class DCMotor_omnibot_gamepad_auto_test extends DCMotor_2Wheel_Encoder2_4
 
         telemetry.addData("StartActions", "Derived class Called");
         telemetry.update();
-        double distance = 6;
+        double distance = 20;
 
-        moveToDirection("Clockwise", motorSpeed, distance);
-        moveToDirection("CounterClockWise", motorSpeed,distance);
-        moveToDirection("East", motorSpeed, distance);
-        moveToDirection("West", motorSpeed, distance);
+//        moveToDirection("Clockwise", motorSpeed, distance);
+  //      moveToDirection("CounterClockWise", motorSpeed,distance);
+
         moveToDirection("North", motorSpeed, distance);
+        sleep(3000);
         moveToDirection("South", motorSpeed,distance);
-        moveToDirection("SouthWest", motorSpeed, distance);
+        sleep(3000);
+
+
         moveToDirection("NorthEast", motorSpeed,distance);
+        sleep(3000);
+
+        moveToDirection("SouthWest", motorSpeed, distance);
+        sleep(3000);
+
+        moveToDirection("East", motorSpeed, distance);
+        sleep(3000);
+
+        moveToDirection("West", motorSpeed, distance);
+        sleep(3000);
+
         moveToDirection("SouthEast", motorSpeed,distance);
+        sleep(3000);
+
         moveToDirection("NorthWest", motorSpeed,distance);
+        sleep(3000);
+
     }
 
 }
