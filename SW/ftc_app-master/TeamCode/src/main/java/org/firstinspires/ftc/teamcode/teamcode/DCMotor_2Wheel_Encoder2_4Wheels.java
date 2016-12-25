@@ -35,6 +35,7 @@ package org.firstinspires.ftc.teamcode.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.GyroSensor;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -46,8 +47,9 @@ public class DCMotor_2Wheel_Encoder2_4Wheels extends LinearOpMode {
     DcMotor motorC = null;
     DcMotor motorD = null;
     DcMotor motorE = null;
-    TouchSensor touch_sensor = null;
+    GyroSensor gyro_sensor = null;
     private ElapsedTime runtime = new ElapsedTime();
+    String log = "";
 
     static final double COUNTS_PER_MOTOR_REV = 1440;    // eg: TETRIX Motor Encoder
     static final double DRIVE_GEAR_REDUCTION = 1.0;     // This is < 1.0 if geared UP
@@ -74,7 +76,6 @@ public class DCMotor_2Wheel_Encoder2_4Wheels extends LinearOpMode {
         motorC = hardwareMap.dcMotor.get("motor_c");
         motorD = hardwareMap.dcMotor.get("motor_d");
         motorE = hardwareMap.dcMotor.get("motor_e");
-        touch_sensor = hardwareMap.touchSensor.get("touch_sensor");
 
         telemetry.addData("Status", "Resetting Encoders");    //
         telemetry.update();
@@ -110,6 +111,8 @@ public class DCMotor_2Wheel_Encoder2_4Wheels extends LinearOpMode {
 
         telemetry.update();
 
+        CalibrateGyro();
+
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
         telemetry.addData("Started","Auto mode");
@@ -128,9 +131,9 @@ public class DCMotor_2Wheel_Encoder2_4Wheels extends LinearOpMode {
                 motorE.setPower(motorSpeed);
                 triggerIsPressed = false;
             }
-            if(touch_sensor.isPressed()) {
+            /*if(touch_sensor.isPressed()) {
                 sensorIsPressed = true;
-            }
+            }*/
             if (ballpullstarted == true && sensorIsPressed == true ) {
                 telemetry.addData("Touch Sensor: ", "Pressed");
                 telemetry.update();
@@ -151,6 +154,49 @@ public class DCMotor_2Wheel_Encoder2_4Wheels extends LinearOpMode {
         telemetry.update();
     }
 
+   /* private void CalibrateGyro()
+    {
+        gyro_sensor = hardwareMap.gyroSensor.get("gyro_sensor");
+
+        telemetry.addData("Status", "Starting calibration");    //
+        telemetry.update();
+
+        double sum = 0.0;
+        for (int i = 0; i < 50; i++)
+        {
+            sum += gyro_sensor.getRotationFraction();
+            waitOneFullHardwareCycle();
+        }
+        zeroOffset = sum/50.0;
+    }*/
+
+    private void CalibrateGyro()
+    {
+        gyro_sensor = hardwareMap.gyroSensor.get("gyro_sensor");
+
+        telemetry.addData("Status", "Starting calibration");    //
+        telemetry.update();
+
+        gyro_sensor.calibrate();
+        while(gyro_sensor.isCalibrating())
+        {
+            telemetry.addData("Status", "Calibrating");
+            telemetry.update();
+        }
+
+        telemetry.addData("Status", "Finished calibrating");
+        telemetry.update();
+    }
+
+    public void TestGyro()
+    {
+      // telemetry.addData("Status", "GYRO RotationFraction, X,Y,Z:" +  "; " + "; " +  gyro_sensor.getRotationFraction() + "; " +   gyro_sensor.rawX() + "; " + gyro_sensor.rawY() + "; " + gyro_sensor.rawZ());    //
+        log += gyro_sensor.rawX() + "; " + gyro_sensor.rawY() + "; " + gyro_sensor.rawZ() + "\n";
+       telemetry.addData("Status", log);
+       telemetry.update();
+        sleep(3000);
+    }
+
     public void startActions()
     {
         telemetry.addData("StartActions", "Base class Called");
@@ -168,34 +214,34 @@ public class DCMotor_2Wheel_Encoder2_4Wheels extends LinearOpMode {
         if (direction == "North") {
             moveMotor(newdistance, -newdistance, -newdistance, newdistance, motorSpeed);
         }
-        if (direction == "NorthWest") {
+        if (direction == "NorthEast") {
             moveMotor(0, -distance, 0, distance, motorSpeed);
         }
-        if (direction == "West") {
+        if (direction == "East") {
             moveMotor(-newdistance, -newdistance, newdistance, newdistance, motorSpeed);
         }
-        if (direction == "SouthWest") {
+        if (direction == "SouthEast") {
             moveMotor(-distance, 0, distance, 0, motorSpeed);
         }
         if (direction == "South") {
             moveMotor(-newdistance, newdistance, newdistance, -newdistance, motorSpeed);
         }
-        if (direction == "SouthEast") {
+        if (direction == "SouthWest") {
             moveMotor(0, distance, 0, -distance, motorSpeed);
         }
-        if (direction == "East") {
+        if (direction == "West") {
             moveMotor(newdistance, newdistance, -newdistance, -newdistance, motorSpeed);
         }
-        if (direction == "NorthEast") {
+        if (direction == "NorthWest") {
             moveMotor(distance, 0, -distance, 0, motorSpeed);
         }
         if (direction == "noDirection") {
             moveMotor(0, 0, 0, 0, motorSpeed);
         }
-        if (direction == "Clockwise") {
+        if (direction == "CounterClockWise") {
             moveMotor(distance,distance,distance,distance, motorSpeed);
         }
-        if (direction == "CounterClockWise") {
+        if (direction == "Clockwise") {
             moveMotor(-distance,-distance,-distance,-distance,motorSpeed);
         }
     }

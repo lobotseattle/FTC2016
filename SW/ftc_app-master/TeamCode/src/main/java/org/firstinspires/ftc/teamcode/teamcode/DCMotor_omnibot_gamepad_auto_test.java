@@ -52,18 +52,20 @@ public class DCMotor_omnibot_gamepad_auto_test extends DCMotor_2Wheel_Encoder2_4
 {
     boolean state = false;
 
-    double motorSpeed = 0.1;
+    double motorSpeed = 0.3;
     @Override
     public void startActions()
     {
 
-        telemetry.addData("StartActions", "Derived class Called");
-        telemetry.update();
+        //telemetry.addData("StartActions", "Derived class Called");
+        //telemetry.update();
         double distance = 20;
+
+        TestGyro();
 
 //        moveToDirection("Clockwise", motorSpeed, distance);
   //      moveToDirection("CounterClockWise", motorSpeed,distance);
-
+/*
         moveToDirection("North", motorSpeed, distance);
         sleep(3000);
         moveToDirection("South", motorSpeed,distance);
@@ -87,7 +89,7 @@ public class DCMotor_omnibot_gamepad_auto_test extends DCMotor_2Wheel_Encoder2_4
 
         moveToDirection("NorthWest", motorSpeed,distance);
         sleep(3000);
-
+*/
     }
 
 }
