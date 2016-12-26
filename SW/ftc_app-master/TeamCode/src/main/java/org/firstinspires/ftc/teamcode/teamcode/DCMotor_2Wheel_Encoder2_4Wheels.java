@@ -36,6 +36,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.GyroSensor;
+import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
+
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -47,7 +49,7 @@ public class DCMotor_2Wheel_Encoder2_4Wheels extends LinearOpMode {
     DcMotor motorC = null;
     DcMotor motorD = null;
     DcMotor motorE = null;
-    GyroSensor gyro_sensor = null;
+    ModernRoboticsI2cGyro gyro_sensor = null;
     private ElapsedTime runtime = new ElapsedTime();
     String log = "";
 
@@ -123,6 +125,7 @@ public class DCMotor_2Wheel_Encoder2_4Wheels extends LinearOpMode {
         {
             // double angle = getGamepadAngle(gamepad1.right_stick_x, gamepad1.right_stick_y);
             // gear motor start
+            /*
             if (gamepad2.right_trigger > 0.0) {
                 triggerIsPressed = true;
             }
@@ -133,7 +136,7 @@ public class DCMotor_2Wheel_Encoder2_4Wheels extends LinearOpMode {
             }
             /*if(touch_sensor.isPressed()) {
                 sensorIsPressed = true;
-            }*/
+            }
             if (ballpullstarted == true && sensorIsPressed == true ) {
                 telemetry.addData("Touch Sensor: ", "Pressed");
                 telemetry.update();
@@ -142,6 +145,7 @@ public class DCMotor_2Wheel_Encoder2_4Wheels extends LinearOpMode {
                 ballpullstarted = false;
                 sensorIsPressed = false;
             }
+            */
             startActions();
         }
 
@@ -154,25 +158,9 @@ public class DCMotor_2Wheel_Encoder2_4Wheels extends LinearOpMode {
         telemetry.update();
     }
 
-   /* private void CalibrateGyro()
-    {
-        gyro_sensor = hardwareMap.gyroSensor.get("gyro_sensor");
-
-        telemetry.addData("Status", "Starting calibration");    //
-        telemetry.update();
-
-        double sum = 0.0;
-        for (int i = 0; i < 50; i++)
-        {
-            sum += gyro_sensor.getRotationFraction();
-            waitOneFullHardwareCycle();
-        }
-        zeroOffset = sum/50.0;
-    }*/
-
     private void CalibrateGyro()
     {
-        gyro_sensor = hardwareMap.gyroSensor.get("gyro_sensor");
+        gyro_sensor = (ModernRoboticsI2cGyro) hardwareMap.gyroSensor.get("gyro_sensor");
 
         telemetry.addData("Status", "Starting calibration");    //
         telemetry.update();
@@ -191,8 +179,9 @@ public class DCMotor_2Wheel_Encoder2_4Wheels extends LinearOpMode {
     public void TestGyro()
     {
       // telemetry.addData("Status", "GYRO RotationFraction, X,Y,Z:" +  "; " + "; " +  gyro_sensor.getRotationFraction() + "; " +   gyro_sensor.rawX() + "; " + gyro_sensor.rawY() + "; " + gyro_sensor.rawZ());    //
-        log += gyro_sensor.rawX() + "; " + gyro_sensor.rawY() + "; " + gyro_sensor.rawZ() + "\n";
-       telemetry.addData("Status", log);
+        this.gyro_sensor.setHeadingMode(ModernRoboticsI2cGyro.HeadingMode.HEADING_CARDINAL);
+        int heading = this.gyro_sensor.getHeading();
+       telemetry.addData("Status", heading);
        telemetry.update();
         sleep(3000);
     }
@@ -432,6 +421,70 @@ public class DCMotor_2Wheel_Encoder2_4Wheels extends LinearOpMode {
             {
                 telemetry.addData("Motor Test",  "RUNNING - to %7d", targetPosition);
                 telemetry.update();
+            }
+        }
+    }
+
+    public void rotateRobot (int degrees)
+    {
+        double turningSpeed = 0.1;
+        // set the mode of te gyro
+        this.gyro_sensor.setHeadingMode(ModernRoboticsI2cGyro.HeadingMode.HEADING_CARDINAL);
+        // get the current hesding value
+        int currentHeading = this.gyro_sensor.getHeading();
+
+        // compute the target. Take care of the 360 degree fold
+        // the gyro values go from 0-359
+        // the best way to calculate is to use the modulus operator to calculate the remainder
+        int targetHeading = (currentHeading + degrees + 360 ) % 360;
+        // calculate angular distance both in clockwise and in counter clockwise directions
+        int CWDistance = targetHeading - currentHeading;
+        int CCWDistance = 360 - CWDistance;
+        int deltaDistance = CCWDistance-CWDistance;
+
+        // defalt is clockwise direction
+        boolean clockwiseMotion = true;
+
+        if (deltaDistance < 0 ) clockwiseMotion = false ;
+
+        telemetry.addData("Current Angle", currentHeading);
+        telemetry.addData("Target Angle", targetHeading);
+        telemetry.update();
+        sleep(3000);
+
+        if (!clockwiseMotion)
+        {
+            // move counter clockwise to the desired angle
+            motorA.setPower(turningSpeed);
+            motorB.setPower(turningSpeed);
+            motorC.setPower(turningSpeed);
+            motorD.setPower(turningSpeed);
+        }
+        else
+        {
+            // move clockwise to the desired angle
+            motorA.setPower(-turningSpeed);
+            motorB.setPower(-turningSpeed);
+            motorC.setPower(-turningSpeed);
+            motorD.setPower(-turningSpeed);
+        }
+
+        while (opModeIsActive() &&
+                (runtime.seconds() < 30000)   )
+        {
+            int currentReading = this.gyro_sensor.getHeading();
+            telemetry.addData("Target Angle", targetHeading);
+            telemetry.addData("Current Angle", currentReading);
+            String direction = "Clockwise"; if (clockwiseMotion == false) { direction="Counter Clockwise"; }
+            telemetry.addData("Direction", direction);
+            telemetry.update();
+            if (Math.abs(currentReading-targetHeading) <= 1)
+            {
+                motorA.setPower(0);
+                motorB.setPower(0);
+                motorC.setPower(0);
+                motorD.setPower(0);
+                break;
             }
         }
     }
