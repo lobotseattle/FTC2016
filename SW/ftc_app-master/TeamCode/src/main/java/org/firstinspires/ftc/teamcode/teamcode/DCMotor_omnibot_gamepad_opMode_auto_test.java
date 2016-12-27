@@ -105,6 +105,38 @@ public class DCMotor_omnibot_gamepad_opMode_auto_test  extends OpMode_Robot
         //telemetry.addData("StartActions", "Derived class Called");
         //telemetry.update();
         double distance = 12;
+        
+        //R1 and B1//
+    actions[1] = new GoStraightRobotAction("North", 1, 5);
+    actions[2] = new TurnRobotAction(1, 180);
+    actions[3] = new
+    //turn on shooter motor//
+    actions[4] = new GoStraightRobotAction ("East", 1, 7);
+    actions[5] = sleep(500);
+    actions[6] = new GoStraightRobotAction ("East", 1, 0.083);
+    //repeat until beacon turns color//
+    actions[7] = new GoStraightRobotAction("North", 1, 2);
+    actions[8] = sleep(500)
+    actions[9] = new GoStraightRobotAction("East",1,0.083);
+    actions[10] = new GoStraightRobotAction ("South",1,6);
+    actions[11] = new GoStraightRobotAction ("West",1,1);
+
+
+
+    //R2 and B2//
+    actions[1] = new GoStraightRobotAction("North", 1, 5);
+    actions[2] = new TurnRobotAction(1, 180);
+    actions[3] = new
+    //turn on shooter motor//
+    actions[4] = new GoStraightRobotAction ("East", 1, 5);
+    actions[5] = sleep(500);
+    actions[6] = new GoStraightRobotAction ("East", 1, 0.083);
+    //repeat until beacon turns color//
+    actions[7] = new GoStraightRobotAction("North", 1, 2);
+    actions[8] = sleep(500)
+    actions[9] = new GoStraightRobotAction("East",1,0.083);
+    actions[10] = new GoStraightRobotAction ("South",1,6);
+    actions[11] = new GoStraightRobotAction ("West",1,1);
 
        /* rotateRobot(90);
         rotateRobot(-90);
