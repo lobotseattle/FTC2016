@@ -60,15 +60,16 @@ public class DCMotor_omnibot_gamepad_auto_test extends DCMotor_2Wheel_Encoder2_4
         //telemetry.addData("StartActions", "Derived class Called");
         //telemetry.update();
         double distance = 20;
-
-
-        rotateRobot(90);
+        testIRSensor();
+        //testColorSensors();
+        // testAllServos();
+     /*   rotateRobot(90);
         rotateRobot(-90);
         rotateRobot(9);
         rotateRobot(-10);
         rotateRobot(15);
         rotateRobot(275);
-        rotateRobot(365);
+        rotateRobot(365);*/
 
 
 //        moveToDirection("Clockwise", motorSpeed, distance);

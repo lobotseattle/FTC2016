@@ -33,12 +33,15 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.firstinspires.ftc.teamcode.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.GyroSensor;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
+import com.qualcomm.robotcore.hardware.IrSeekerSensor;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
+import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cColorSensor;
+import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cIrSeekerSensorV3;
 
-import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 //@Autonomous(name="DCMotor 2Wheel Drive Encoder2 4Wheels", group="Linear Opmode")  // @Autonomous(...) is the other common choice
@@ -50,6 +53,14 @@ public class DCMotor_2Wheel_Encoder2_4Wheels extends LinearOpMode {
     DcMotor motorD = null;
     DcMotor motorE = null;
     ModernRoboticsI2cGyro gyro_sensor = null;
+    Servo servo1 = null;
+    Servo servo2 = null;
+    OpticalDistanceSensor ods = null;
+    ModernRoboticsI2cColorSensor colorSensor1 = null;
+    ModernRoboticsI2cColorSensor colorSensor2 = null;
+    ModernRoboticsI2cIrSeekerSensorV3 irSensor = null;
+
+
     private ElapsedTime runtime = new ElapsedTime();
     String log = "";
 
@@ -114,6 +125,10 @@ public class DCMotor_2Wheel_Encoder2_4Wheels extends LinearOpMode {
         telemetry.update();
 
         CalibrateGyro();
+        initServo();
+        initOds();
+        initColorSensor();
+        initIRSensor();
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
@@ -488,4 +503,125 @@ public class DCMotor_2Wheel_Encoder2_4Wheels extends LinearOpMode {
             }
         }
     }
+
+    public void initServo()
+    {
+        servo1 = hardwareMap.servo.get("servo1");
+        servo2 = hardwareMap.servo.get("servo2");
+        servo1.setPosition(0);
+        servo2.setPosition(0);
+
+    }
+
+    public void testAllServos()
+    {
+        testServo(servo1);
+        testServo(servo2);
+    }
+
+    public void goToZero(Servo servo)
+    {
+        servo.setDirection(Servo.Direction.FORWARD);
+        servo.setPosition(0);
+        sleep(2000);
+    }
+
+    public void gotToOne (Servo servo)
+    {
+        servo.setDirection(Servo.Direction.FORWARD);
+        servo.setPosition(1);
+        sleep(2000);
+    }
+
+    public void testServo(Servo servo)
+    {
+        int portNumber = servo.getPortNumber();
+        telemetry.addData("Servo ", portNumber);
+        telemetry.addData("Test","FORWARD, target 0");
+        telemetry.update();
+        goToZero(servo);
+
+
+        telemetry.addData("Servo ", portNumber);
+        telemetry.addData("Test","FORWARD, target 1");
+        telemetry.update();
+        gotToOne(servo);
+
+        telemetry.addData("Servo ", portNumber);
+        telemetry.addData("Test","FORWARD, target 0");
+        telemetry.update();
+        goToZero(servo);
+
+    }
+
+    public void initOds()
+    {
+        this.ods = hardwareMap.opticalDistanceSensor.get("optical_distance");
+        this.ods.enableLed(true);
+    }
+
+    public double readDistance()
+    {
+        double rawLightValue = this.ods.getRawLightDetected();
+        double lightValue = this.ods.getLightDetected();
+        telemetry.addData("Testing", "ODS Sensor");
+        telemetry.addData("Ligth detected", lightValue);
+        telemetry.addData("Raw light detected", rawLightValue);
+        telemetry.update();
+        return lightValue;
+    }
+
+    public void initColorSensor()
+    {
+        this.colorSensor1 = (ModernRoboticsI2cColorSensor)
+                hardwareMap.colorSensor.get("color1");
+        this.colorSensor1.enableLed(false);
+
+        this.colorSensor2 = (ModernRoboticsI2cColorSensor)
+                hardwareMap.colorSensor.get("color2");
+        this.colorSensor2.enableLed(true);
+    }
+
+
+    public void testColorSensors()
+    {
+        int cs1RedValue = this.colorSensor1.red();
+        int cs1GreenValue = this.colorSensor1.green();
+        int cs1BlueValue = this.colorSensor1.blue();
+        telemetry.addData("Testing", "Color Sensor");
+        telemetry.addData("Red", cs1RedValue);
+        telemetry.addData("Green", cs1GreenValue);
+        telemetry.addData("Blue", cs1BlueValue);
+        telemetry.update();
+    }
+
+    public void initIRSensor()
+    {
+        this.irSensor = (ModernRoboticsI2cIrSeekerSensorV3) hardwareMap.irSeekerSensor.get("ir_seeker");
+        this.irSensor.setMode(IrSeekerSensor.Mode.MODE_1200HZ);
+    }
+
+    public void testIRSensor()
+    {
+        telemetry.addData("Testing", "IR Sensor");
+
+        if (this.irSensor.signalDetected())
+        {
+            double strength = this.irSensor.getStrength();
+            double angle = this.irSensor.getAngle();
+            telemetry.addData("IR Signal", "Detected");
+            telemetry.addData("Strength", strength);
+            telemetry.addData("Angle", angle);
+            telemetry.update();
+        }
+        else
+        {
+            telemetry.addData("IR Signal", "Not Detected");
+            telemetry.addData("Strength", "");
+            telemetry.addData("Angle", "");
+            telemetry.update();
+        }
+    }
 }
+
+
