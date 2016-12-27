@@ -54,14 +54,57 @@ public class DCMotor_omnibot_gamepad_opMode_auto_test  extends OpMode_Robot
     boolean state = false;
 
     double motorSpeed = 0.3;
+    double turnSpeed = 0.1;
+
     @Override
     public void startActions()
     {
+        telemetry.addData("Status", "Inside start actions");
+        telemetry.update();
+
+        rotateRobot(0.1, 90);
+
+        if(currentActionIndex >= actions.length) {
+            return;
+        }
+
+        if(actions[currentActionIndex].robotActionMode == RobotActionModes.GoStraight)
+        {
+            GoStraightRobotAction action = (GoStraightRobotAction) actions[currentActionIndex];
+
+            telemetry.addData("Status", "currentActionIndex: " + currentActionIndex);
+            telemetry.update();
+            driveRobotInDirection(action.Direction, action.Speed, action.Distance);
+        }
+        else if(actions[currentActionIndex].robotActionMode == RobotActionModes.Turn)
+        {
+            TurnRobotAction action = (TurnRobotAction) actions[currentActionIndex];
+
+            telemetry.addData("Status", "currentActionIndex: " + currentActionIndex);
+            telemetry.update();
+            rotateRobot(action.MotorSpeed, action.Degrees);
+        }
+
+        /*switch(actions[currentActionIndex].robotActionMode)
+        {
+            case RobotActionModes.GoStraight:
+                moveToDirection(actions[currentActionIndex].Direction, actions[currentActionIndex].MotorSpeed, actions[currentActionIndex].Distance);
+                break;
+            default:
+                break;
+        }*/
+    }
+
+    @Override
+    public void registerActions()
+    {
+        int x = 7;
+
+        actions = new IRobotAction[15-x];
 
         //telemetry.addData("StartActions", "Derived class Called");
         //telemetry.update();
-        double distance = 20;
-
+        double distance = 12;
 
        /* rotateRobot(90);
         rotateRobot(-90);
@@ -71,11 +114,30 @@ public class DCMotor_omnibot_gamepad_opMode_auto_test  extends OpMode_Robot
         rotateRobot(275);
         rotateRobot(365);*/
 
-
-//        moveToDirection("Clockwise", motorSpeed, distance);
+        //        moveToDirection("Clockwise", motorSpeed, distance);
   //      moveToDirection("CounterClockWise", motorSpeed,distance);
+        //actions[0] = moveToDirection("North", motorSpeed, distance);
+        //actions[1] = moveToDirection("South", motorSpeed, distance);
 
-        moveToDirection("North", motorSpeed, distance);
+        /*actions[0] = new GoStraightRobotAction("North", motorSpeed, distance);
+        actions[1] = new GoStraightRobotAction("South", motorSpeed, distance);
+        actions[2] = new GoStraightRobotAction("East", motorSpeed, distance);
+        actions[3] = new GoStraightRobotAction("West", motorSpeed, distance);
+        actions[4] = new GoStraightRobotAction("NorthEast", motorSpeed,distance);
+        actions[5] = new GoStraightRobotAction("SouthWest", motorSpeed, distance);
+        actions[6] = new GoStraightRobotAction("SouthEast", motorSpeed,distance);*/
+       /* actions[7-x] = new GoStraightRobotAction("NorthWest", motorSpeed,distance);
+        actions[8-x] = new TurnRobotAction(turnSpeed, 90);
+        actions[9-x] = new TurnRobotAction(turnSpeed, -90);
+        actions[10-x] = new TurnRobotAction(turnSpeed, 9);
+        actions[11-x] = new TurnRobotAction(turnSpeed, -10);
+        actions[12-x] = new TurnRobotAction(turnSpeed, 15);
+        actions[13-x] = new TurnRobotAction(turnSpeed, 275);
+        actions[14-x] = new TurnRobotAction(turnSpeed, 365);*/
+
+        //actions = new IRobotAction[1];
+        //actions[0] = new TurnRobotAction(turnSpeed, 90);
+
       //  wait(3000);
     /*    moveToDirection("South", motorSpeed,distance);
         //wait(3000);

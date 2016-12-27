@@ -32,12 +32,19 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 package org.firstinspires.ftc.teamcode.teamcode;
 
+import android.support.annotation.NonNull;
+
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cGyro;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
 
 //@Autonomous(name="OpMode Robot", group="Linear Opmode")  // @Autonomous(...) is the other common choice
 public class OpMode_Robot extends OpMode {
@@ -47,6 +54,28 @@ public class OpMode_Robot extends OpMode {
     DcMotor motorC = null;
     DcMotor motorD = null;
     DcMotor motorE = null;
+
+    int newTargetA = 0;
+    int newTargetB = 0;
+    int newTargetC = 0;
+    int newTargetD = 0;
+
+    double motorADistance;
+    double motorBDistance;
+    double motorCDistance;
+    double motorDDistance;
+    double speed;
+    double timeoutS;
+
+    RobotActionModes robotActionMode;
+    IRobotAction[] actions;
+    int currentActionIndex = 0;
+    boolean targetActive = false;
+
+    int targetHeading = 0;
+    double turningSpeed = 0.1;
+    boolean clockwiseMotion = true;
+
     ModernRoboticsI2cGyro gyro_sensor = null;
     private ElapsedTime runtime = new ElapsedTime();
     String log = "";
@@ -113,6 +142,8 @@ public class OpMode_Robot extends OpMode {
         telemetry.update();
 
         CalibrateGyro();
+
+        registerActions();
     }
         public void loop() {
 
@@ -187,6 +218,10 @@ public class OpMode_Robot extends OpMode {
         //sleep(3000);
     }
 
+    public void registerActions()
+    {
+    }
+
     public void startActions()
     {
         telemetry.addData("StartActions", "Base class Called");
@@ -197,78 +232,46 @@ public class OpMode_Robot extends OpMode {
         encoderDrive(DRIVE_SPEED, -12, -12 , 25);  // Go reverse straight 12 inches*/
     }
 
-    public void moveToDirection(String direction, double motorSpeed, double distance)
+    public void driveRobotInDirection(String direction, double motorSpeed, double distance)
     {
         double newdistance = distance / vectorFactorMultiplier;
 
         if (direction == "North") {
-            moveMotor(newdistance, -newdistance, -newdistance, newdistance, motorSpeed);
+            driveMotors(newdistance, -newdistance, -newdistance, newdistance, motorSpeed);
         }
         if (direction == "NorthEast") {
-            moveMotor(0, -distance, 0, distance, motorSpeed);
+            driveMotors(0, -distance, 0, distance, motorSpeed);
         }
         if (direction == "East") {
-            moveMotor(-newdistance, -newdistance, newdistance, newdistance, motorSpeed);
+            driveMotors(-newdistance, -newdistance, newdistance, newdistance, motorSpeed);
         }
         if (direction == "SouthEast") {
-            moveMotor(-distance, 0, distance, 0, motorSpeed);
+            driveMotors(-distance, 0, distance, 0, motorSpeed);
         }
         if (direction == "South") {
-            moveMotor(-newdistance, newdistance, newdistance, -newdistance, motorSpeed);
+            driveMotors(-newdistance, newdistance, newdistance, -newdistance, motorSpeed);
         }
         if (direction == "SouthWest") {
-            moveMotor(0, distance, 0, -distance, motorSpeed);
+            driveMotors(0, distance, 0, -distance, motorSpeed);
         }
         if (direction == "West") {
-            moveMotor(newdistance, newdistance, -newdistance, -newdistance, motorSpeed);
+            driveMotors(newdistance, newdistance, -newdistance, -newdistance, motorSpeed);
         }
         if (direction == "NorthWest") {
-            moveMotor(distance, 0, -distance, 0, motorSpeed);
+            driveMotors(distance, 0, -distance, 0, motorSpeed);
         }
         if (direction == "noDirection") {
-            moveMotor(0, 0, 0, 0, motorSpeed);
+            driveMotors(0, 0, 0, 0, motorSpeed);
         }
         if (direction == "CounterClockWise") {
-            moveMotor(distance,distance,distance,distance, motorSpeed);
+            driveMotors(distance,distance,distance,distance, motorSpeed);
         }
         if (direction == "Clockwise") {
-            moveMotor(-distance,-distance,-distance,-distance,motorSpeed);
+            driveMotors(-distance,-distance,-distance,-distance,motorSpeed);
         }
     }
 
-    //public void moveToDirection_old(String direction, double motorSpeed, double distance) {
-        //if (direction == "North") {
-            //moveMotor(motorSpeed, -motorSpeed, -motorSpeed, motorSpeed, distance);
-        /*}
-       // if (direction == "NorthWest") {
-         //   moveMotor(motorSpeed, -motorSpeed, motorSpeed, motorSpeed, distance);
-        }
-        if (direction == "West") {
-            moveMotor(-motorSpeed, -motorSpeed, motorSpeed, motorSpeed, distance);
-        }
-        if (direction == "SouthWest") {
-            moveMotor(-motorSpeed, motorSpeed, motorSpeed, motorSpeed, distance);
-        }
-        if (direction == "South") {
-            moveMotor(-motorSpeed, motorSpeed, motorSpeed, -motorSpeed, distance);
-        }
-        if (direction == "SouthEast") {
-            moveMotor(-motorSpeed, motorSpeed, -motorSpeed, -motorSpeed, distance);
-        }
-        if (direction == "East") {
-            //moveMotor(motorSpeed, motorSpeed, -motorSpeed, -motorSpeed, distance);
-            moveMotor(0, motorSpeed, -motorSpeed, -0, distance);
-        }
-        if (direction == "NorthEast") {
-            moveMotor(motorSpeed, -motorSpeed, -motorSpeed, -motorSpeed, distance);
-
-        }
-        if (direction == "noDirection") {
-            moveMotor(0, 0, 0, 0, distance);
-        }
-    }*/
-
-    public void moveMotor(String motorName, double motorSpeed, double distance ) {
+   /* public void driveMotors(String motorName, double motorSpeed, double distance ) {
         while (distance >= 0) {
             if (motorName.equalsIgnoreCase("frontLeft")) {
                 motorA.setPower(motorSpeed);
@@ -282,10 +285,17 @@ public class OpMode_Robot extends OpMode {
                 motorE.setPower(motorSpeed);
             }
         }
-    }
+    }*/
 
-    public void moveMotor(double motorADistance, double motorBDistance, double motorCDistance, double motorDDistance, double speed) {
-        encoderDrive(motorADistance, motorBDistance, motorCDistance, motorDDistance, speed, 30000);
+    public void driveMotors(double motorADistance, double motorBDistance, double motorCDistance, double motorDDistance, double speed) {
+        if(!targetActive) {
+            setGoStraightTarget(motorADistance, motorBDistance, motorCDistance, motorDDistance, speed, 30000);
+            targetActive = true;
+        }
+        else
+        {
+            moveStraightToTarget();
+        }
     }
 
     public void encoderDriveInches(
@@ -298,15 +308,74 @@ public class OpMode_Robot extends OpMode {
 
     }
 
-    public void encoderDrive(
-            double motorADistance, double motorBDistance, double motorCDistance, double motorDDistance, double speed, double timeoutS) {
+    public void moveStraightToTarget()
+    {
+        if(motorADistance != 0)
+        {
+            motorA.setPower(Math.abs(speed));
+        }
+        if(motorBDistance != 0)
+        {
+            motorB.setPower(Math.abs(speed));
+        }
+        if(motorCDistance != 0)
+        {
+            motorC.setPower(Math.abs(speed));
+        }
+        if(motorDDistance != 0)
+        {
+            motorD.setPower(Math.abs(speed));
+        }
 
-        int newTargetA = 0;
-        int newTargetB = 0;
-        int newTargetC = 0;
-        int newTargetD = 0;
+        // keep looping while we are still active, and there is time left, and both motors are running.
+        if ((runtime.seconds() < timeoutS) &&
+                //(motorA.isBusy() || motorB.isBusy() || motorC.isBusy() || motorD.isBusy())
+                (isMotorBusy(motorA) || isMotorBusy(motorB) || isMotorBusy(motorC) || isMotorBusy(motorD))
+                )
+        {
 
-            if(motorADistance != 0)
+            // Display it for the driver.
+            telemetry.addData("Path1",  "RUNNING - to %7d : %7d : %7d : %7d", newTargetA, newTargetB, newTargetC, newTargetD);
+            telemetry.addData("Path2",  "RUNNING - at %7d : %7d : %7d : %7d",
+                    (motorADistance ==0) ? 0: motorA.getCurrentPosition(),
+                    (motorBDistance ==0) ? 0: motorB.getCurrentPosition(),
+                    (motorCDistance ==0) ? 0: motorC.getCurrentPosition(),
+                    (motorDDistance ==0) ? 0: motorD.getCurrentPosition());
+
+            telemetry.update();
+        }
+
+        else {
+
+            targetActive = false;
+            currentActionIndex++;
+
+            // Stop all motion;
+            motorA.setPower(0);
+            motorB.setPower(0);
+            motorC.setPower(0);
+            motorD.setPower(0);
+
+            // Turn off RUN_TO_POSITION
+            motorA.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            motorB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            motorC.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            motorD.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+            }
+    }
+
+
+    public void setGoStraightTarget(double motorADistance, double motorBDistance, double motorCDistance, double motorDDistance, double speed, double timeoutS) {
+
+        this.motorADistance = motorADistance;
+        this.motorBDistance = motorBDistance;
+        this.motorCDistance  = motorCDistance;
+        this.motorDDistance = motorDDistance;
+        this.speed = speed;
+        this.timeoutS = timeoutS;
+
+         if(motorADistance != 0)
             {
                 // Determine new target position, and pass to motor controller
                 newTargetA = motorA.getCurrentPosition() + (int) (motorADistance * COUNTS_PER_INCH);
@@ -338,56 +407,6 @@ public class OpMode_Robot extends OpMode {
 
             // reset the timeout time and start motion.
             runtime.reset();
-            if(motorADistance != 0)
-            {
-                motorA.setPower(Math.abs(speed));
-            }
-            if(motorBDistance != 0)
-            {
-                motorB.setPower(Math.abs(speed));
-            }
-            if(motorCDistance != 0)
-            {
-                motorC.setPower(Math.abs(speed));
-            }
-            if(motorDDistance != 0)
-            {
-                motorD.setPower(Math.abs(speed));
-            }
-
-
-            // keep looping while we are still active, and there is time left, and both motors are running.
-            if ((runtime.seconds() < timeoutS) &&
-                    //(motorA.isBusy() || motorB.isBusy() || motorC.isBusy() || motorD.isBusy())
-                    (isMotorBusy(motorA) || isMotorBusy(motorB) || isMotorBusy(motorC) || isMotorBusy(motorD))
-                    )
-            {
-
-                // Display it for the driver.
-                telemetry.addData("Path1",  "RUNNING - to %7d : %7d : %7d : %7d", newTargetA, newTargetB, newTargetC, newTargetD);
-                telemetry.addData("Path2",  "RUNNING - at %7d : %7d : %7d : %7d",
-                        (motorADistance ==0) ? 0: motorA.getCurrentPosition(),
-                        (motorBDistance ==0) ? 0: motorB.getCurrentPosition(),
-                        (motorCDistance ==0) ? 0: motorC.getCurrentPosition(),
-                        (motorDDistance ==0) ? 0: motorD.getCurrentPosition());
-
-              telemetry.update();
-            }
-
-        else {
-                // Stop all motion;
-                motorA.setPower(0);
-                motorB.setPower(0);
-                motorC.setPower(0);
-                motorD.setPower(0);
-
-                // Turn off RUN_TO_POSITION
-                motorA.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                motorB.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                motorC.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                motorD.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            }
-
     }
 
     private boolean isMotorBusy (DcMotor motor)
@@ -419,9 +438,20 @@ public class OpMode_Robot extends OpMode {
         }
     }
 
-    public void rotateRobot (int degrees)
+    public void rotateRobot(double turnSpeed, int degrees)
     {
-        double turningSpeed = 0.1;
+        if(!targetActive) {
+            setRotationTarget(turnSpeed, degrees);
+            targetActive = true;
+        }
+        else
+        {
+            rotateToTarget();
+        }
+    }
+
+    public void setRotationTarget (double turnSpeed, int degrees) {
+        turningSpeed = turnSpeed;
         // set the mode of te gyro
         this.gyro_sensor.setHeadingMode(ModernRoboticsI2cGyro.HeadingMode.HEADING_CARDINAL);
         // get the current hesding value
@@ -430,14 +460,14 @@ public class OpMode_Robot extends OpMode {
         // compute the target. Take care of the 360 degree fold
         // the gyro values go from 0-359
         // the best way to calculate is to use the modulus operator to calculate the remainder
-        int targetHeading = (currentHeading + degrees + 360 ) % 360;
+        targetHeading = (currentHeading + degrees + 360 ) % 360;
         // calculate angular distance both in clockwise and in counter clockwise directions
         int CWDistance = targetHeading - currentHeading;
         int CCWDistance = 360 - CWDistance;
         int deltaDistance = CCWDistance-CWDistance;
 
         // defalt is clockwise direction
-        boolean clockwiseMotion = true;
+        clockwiseMotion = true;
 
         if (deltaDistance < 0 ) clockwiseMotion = false ;
 
@@ -445,7 +475,11 @@ public class OpMode_Robot extends OpMode {
         telemetry.addData("Target Angle", targetHeading);
         telemetry.update();
         //sleep(3000);
+    }
 
+
+    public void rotateToTarget ()
+    {
         if (!clockwiseMotion)
         {
             // move counter clockwise to the desired angle
@@ -473,6 +507,8 @@ public class OpMode_Robot extends OpMode {
             telemetry.update();
             if (Math.abs(currentReading-targetHeading) <= 1)
             {
+                targetActive = false;
+                currentActionIndex++;
                 motorA.setPower(0);
                 motorB.setPower(0);
                 motorC.setPower(0);

@@ -33,6 +33,7 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.firstinspires.ftc.teamcode.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.hardware.Servo;
 
 @Autonomous(name="Robot_B1_CenterVertex", group="Linear Opmode")  // @Autonomous(...) is the other common choice
 //public class Robot_B1_CenterVertex extends DCMotor_2Wheel_Encoder2_BothWheelsTurn {
