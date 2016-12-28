@@ -18,4 +18,9 @@ public class GoStraightRobotAction implements IRobotAction {
         this.Speed = motorSpeed;
         this.Distance = distance;
     }
+
+    public String toString()
+    {
+        return "Go Straight Action";
+    }
 }

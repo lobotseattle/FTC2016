@@ -34,6 +34,9 @@ package org.firstinspires.ftc.teamcode.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.util.ThreadPool;
+
+import static java.lang.Thread.sleep;
 
 /**
  * This file contains an minimal example of a Linear "OpMode". An OpMode is a 'program' that runs in either
@@ -48,7 +51,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name="DCMotor omnibot gamepad opMode auto test", group="Linear Opmode")
+@Autonomous(name="DCMotor omnibot gamepad opMode auto test", group="TestGroup")
 public class DCMotor_omnibot_gamepad_opMode_auto_test  extends OpMode_Robot
 {
     boolean state = false;
@@ -59,31 +62,51 @@ public class DCMotor_omnibot_gamepad_opMode_auto_test  extends OpMode_Robot
     @Override
     public void startActions()
     {
-        telemetry.addData("Status", "Inside start actions");
+        super.startActions();
+        telemetry.addData("Status", "Inside start actions: Derived class");
+        telemetry.update();
+        sleep(2000);
+
+        if ( actionStack.empty()) return;
+        IRobotAction action = (IRobotAction) actionStack.firstElement();
+
+        Class c = action.getClass();
+        telemetry.addData("Action", action.toString());
+        telemetry.addData("Action Class", c.toString());
         telemetry.update();
 
-        rotateRobot(0.1, 90);
-
-        if(currentActionIndex >= actions.length) {
-            return;
+        if ( action instanceof GoStraightRobotAction )
+        {
+            // cast the generic action into go straight
+            GoStraightRobotAction robotAction = (GoStraightRobotAction) action;
+            telemetry.addData("Status", "currentActionIndex: " + currentActionIndex);
+            telemetry.update();
+            driveRobotInDirection(robotAction.Direction, robotAction.Speed, robotAction.Distance);
         }
 
-        if(actions[currentActionIndex].robotActionMode == RobotActionModes.GoStraight)
+        else if (action instanceof TurnRobotAction )
         {
-            GoStraightRobotAction action = (GoStraightRobotAction) actions[currentActionIndex];
+            TurnRobotAction robotAction = (TurnRobotAction) action;
 
             telemetry.addData("Status", "currentActionIndex: " + currentActionIndex);
             telemetry.update();
-            driveRobotInDirection(action.Direction, action.Speed, action.Distance);
+            rotateRobot(robotAction.MotorSpeed, robotAction.Degrees);
         }
-        else if(actions[currentActionIndex].robotActionMode == RobotActionModes.Turn)
+        else if ( action instanceof ShootBallAction )
         {
-            TurnRobotAction action = (TurnRobotAction) actions[currentActionIndex];
-
-            telemetry.addData("Status", "currentActionIndex: " + currentActionIndex);
-            telemetry.update();
-            rotateRobot(action.MotorSpeed, action.Degrees);
+            ShootBallAction shootAction = (ShootBallAction)action;
+            // do the stuff here
         }
+        else if (action instanceof SleepAction )
+        {
+            SleepAction sleepAction = (SleepAction) action;
+            // do the stuff here
+            sleep(sleepAction.milliseconds);
+        }
+
+        telemetry.addData("Action","Complete");
+        actionStack.removeElementAt(0);
+
 
         /*switch(actions[currentActionIndex].robotActionMode)
         {
@@ -98,30 +121,42 @@ public class DCMotor_omnibot_gamepad_opMode_auto_test  extends OpMode_Robot
     @Override
     public void registerActions()
     {
-        int x = 7;
-
-        actions = new IRobotAction[15-x];
+        telemetry.addData("Registering","Started");
+        telemetry.update();
+        actionStack.push(new GoStraightRobotAction("North", 1, 12));
+        actionStack.push( new TurnRobotAction(1,180));
+        actionStack.push ( new ShootBallAction() );
+        actionStack.push( new GoStraightRobotAction ("East", 1, 12));
+        actionStack.push( new SleepAction(500));
+        actionStack.push (new GoStraightRobotAction ("East", 1, 12));
+        actionStack.push ( new SleepAction(500));
+        actionStack.push (  new GoStraightRobotAction("East",1,12) );
+        actionStack.push ( new GoStraightRobotAction ("South",1,12) );
+        actionStack.push( new GoStraightRobotAction ("West",1,12));
+        telemetry.addData("Registering","Complete");
+        telemetry.addData("Action count", actionStack.size());
+        telemetry.update();
 
         //telemetry.addData("StartActions", "Derived class Called");
         //telemetry.update();
         double distance = 12;
-        
-        //R1 and B1//
-    actions[1] = new GoStraightRobotAction("North", 1, 5);
-    actions[2] = new TurnRobotAction(1, 180);
-    actions[3] = new
-    //turn on shooter motor//
-    actions[4] = new GoStraightRobotAction ("East", 1, 7);
-    actions[5] = sleep(500);
-    actions[6] = new GoStraightRobotAction ("East", 1, 0.083);
-    //repeat until beacon turns color//
-    actions[7] = new GoStraightRobotAction("North", 1, 2);
-    actions[8] = sleep(500)
-    actions[9] = new GoStraightRobotAction("East",1,0.083);
-    actions[10] = new GoStraightRobotAction ("South",1,6);
-    actions[11] = new GoStraightRobotAction ("West",1,1);
 
+//        //R1 and B1//
+//    int i=0;
+//    actions[i] = new GoStraightRobotAction("North", 1, 5);i++;
+//    actions[i] = new TurnRobotAction(1, 180);i++;
+//    actions[i] = new ShootBallAction();i++;
+//    actions[i] = new GoStraightRobotAction ("East", 1, 7);i++;
+//    actions[i] = new SleepAction(500);i++;
+//    actions[i] = new GoStraightRobotAction ("East", 1, 0.083);i++;
+//    //repeat until beacon turns color//
+//    actions[i] = new GoStraightRobotAction("North", 1, 2);i++;
+//    actions[i] = new SleepAction(500);i++;
+//    actions[i] = new GoStraightRobotAction("East",1,0.083);i++;
+//    actions[i] = new GoStraightRobotAction ("South",1,6);i++;
+//    actions[i] = new GoStraightRobotAction ("West",1,1);i++;
 
+/*
 
     //R2 and B2//
     actions[1] = new GoStraightRobotAction("North", 1, 5);
@@ -137,7 +172,7 @@ public class DCMotor_omnibot_gamepad_opMode_auto_test  extends OpMode_Robot
     actions[9] = new GoStraightRobotAction("East",1,0.083);
     actions[10] = new GoStraightRobotAction ("South",1,6);
     actions[11] = new GoStraightRobotAction ("West",1,1);
-
+*/
        /* rotateRobot(90);
         rotateRobot(-90);
         rotateRobot(9);
@@ -178,6 +213,7 @@ public class DCMotor_omnibot_gamepad_opMode_auto_test  extends OpMode_Robot
         moveToDirection("NorthEast", motorSpeed,distance);
         //sleep(3000);
 
+
         moveToDirection("SouthWest", motorSpeed, distance);
         //sleep(3000);
 
@@ -194,6 +230,13 @@ public class DCMotor_omnibot_gamepad_opMode_auto_test  extends OpMode_Robot
         //sleep(3000);*/
     }
 
+    public final void sleep(long milliseconds) {
+        try {
+            Thread.sleep(milliseconds);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
 }
 
 

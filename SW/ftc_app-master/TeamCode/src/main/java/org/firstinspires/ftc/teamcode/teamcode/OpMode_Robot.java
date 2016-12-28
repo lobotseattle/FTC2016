@@ -45,9 +45,11 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Stack;
 
 //@Autonomous(name="OpMode Robot", group="Linear Opmode")  // @Autonomous(...) is the other common choice
-public class OpMode_Robot extends OpMode {
+public class OpMode_Robot extends OpMode
+{
 
     DcMotor motorA = null;
     DcMotor motorB = null;
@@ -68,7 +70,11 @@ public class OpMode_Robot extends OpMode {
     double timeoutS;
 
     RobotActionModes robotActionMode;
+
+    // All the actions will be stored in sequence in this array
     IRobotAction[] actions;
+    Stack actionStack = new Stack();
+
     int currentActionIndex = 0;
     boolean targetActive = false;
 
@@ -99,7 +105,8 @@ public class OpMode_Robot extends OpMode {
 
 
     @Override
-    public void init() {
+    public void init()
+    {
 
         motorA = hardwareMap.dcMotor.get("motor_a");
         motorB = hardwareMap.dcMotor.get("motor_b");
@@ -130,14 +137,14 @@ public class OpMode_Robot extends OpMode {
 
         // Send telemetry message to indicate successful Encoder reset
         telemetry.addData
-                (
-                        "Path0", "Starting at %7d :%7d : %7d : %7d : %7d",
-                        motorA.getCurrentPosition(),
-                        motorB.getCurrentPosition(),
-                        motorC.getCurrentPosition(),
-                        motorD.getCurrentPosition(),
-                        motorE.getCurrentPosition()
-                );
+        (
+                "Path0", "Starting at %7d :%7d : %7d : %7d : %7d",
+                motorA.getCurrentPosition(),
+                motorB.getCurrentPosition(),
+                motorC.getCurrentPosition(),
+                motorD.getCurrentPosition(),
+                motorE.getCurrentPosition()
+        );
 
         telemetry.update();
 
@@ -145,41 +152,13 @@ public class OpMode_Robot extends OpMode {
 
         registerActions();
     }
-        public void loop() {
 
-
+    public void loop()
+    {
         //waitForStart();
         telemetry.addData("Started","Auto mode");
         telemetry.update();
-
-
-        //while (opModeIsActive())
-        {
-            // double angle = getGamepadAngle(gamepad1.right_stick_x, gamepad1.right_stick_y);
-            // gear motor start
-            /*
-            if (gamepad2.right_trigger > 0.0) {
-                triggerIsPressed = true;
-            }
-            if (ballpullstarted==false && triggerIsPressed == true) {
-                ballpullstarted = true;
-                motorE.setPower(motorSpeed);
-                triggerIsPressed = false;
-            }
-            /*if(touch_sensor.isPressed()) {
-                sensorIsPressed = true;
-            }
-            if (ballpullstarted == true && sensorIsPressed == true ) {
-                telemetry.addData("Touch Sensor: ", "Pressed");
-                telemetry.update();
-                motorE.setPower(0);
-                ballreleased = true;
-                ballpullstarted = false;
-                sensorIsPressed = false;
-            }
-            */
-            startActions();
-        }
+        startActions();
 
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
