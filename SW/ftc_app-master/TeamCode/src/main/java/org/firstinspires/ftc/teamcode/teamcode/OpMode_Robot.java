@@ -41,6 +41,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -67,6 +69,8 @@ public class OpMode_Robot extends OpMode {
     double speed;
     double timeoutS;
 
+    double sleepMilliseconds = 0;
+
     RobotActionModes robotActionMode;
     IRobotAction[] actions;
     int currentActionIndex = 0;
@@ -86,11 +90,12 @@ public class OpMode_Robot extends OpMode {
     static final double PI = 3.1415;
     static final double COUNTS_PER_INCH = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
             (WHEEL_DIAMETER_INCHES * PI);
-    static final double DRIVE_SPEED = 0.8;
+    static final double DRIVE_SPEED = 0.3;
     static final double TURN_SPEED = 1.0;
     static final double radiusOfRobotRotationPath = 14;
     private double distanceFor360Degrees = 2 * PI * radiusOfRobotRotationPath;
     static final double positionErrorBuffer = COUNTS_PER_INCH / 10;
+   // static final double positionErrorBuffer = COUNTS_PER_INCH / 5;
     static final double vectorFactorMultiplier = Math.sqrt(2);
 
     static final double TIMEOUTINSECONDS = 30;
@@ -149,10 +154,6 @@ public class OpMode_Robot extends OpMode {
 
 
         //waitForStart();
-        telemetry.addData("Started","Auto mode");
-        telemetry.update();
-
-
         //while (opModeIsActive())
         {
             // double angle = getGamepadAngle(gamepad1.right_stick_x, gamepad1.right_stick_y);
@@ -178,16 +179,20 @@ public class OpMode_Robot extends OpMode {
                 sensorIsPressed = false;
             }
             */
-            startActions();
+
+            startActions(telemetry);
         }
+
+            telemetry.addData("Status", "currentActionIndex:" + currentActionIndex);
+            telemetry.update();
 
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
         //encoderDrive(DRIVE_SPEED,  12,  12, 25);  // S1: Forward 47 Inches with 5 Sec timeout
 
 
-        telemetry.addData("Path", "Complete");
-        telemetry.update();
+       /* telemetry.addData("Path", "Complete");
+        telemetry.update();*/
     }
 
     private void CalibrateGyro()
@@ -222,7 +227,7 @@ public class OpMode_Robot extends OpMode {
     {
     }
 
-    public void startActions()
+    public void startActions(Telemetry telemetry)
     {
         telemetry.addData("StartActions", "Base class Called");
         telemetry.update();
@@ -335,19 +340,21 @@ public class OpMode_Robot extends OpMode {
         {
 
             // Display it for the driver.
-            telemetry.addData("Path1",  "RUNNING - to %7d : %7d : %7d : %7d", newTargetA, newTargetB, newTargetC, newTargetD);
+          /*  telemetry.addData("Path1",  "RUNNING - to %7d : %7d : %7d : %7d", newTargetA, newTargetB, newTargetC, newTargetD);
             telemetry.addData("Path2",  "RUNNING - at %7d : %7d : %7d : %7d",
                     (motorADistance ==0) ? 0: motorA.getCurrentPosition(),
                     (motorBDistance ==0) ? 0: motorB.getCurrentPosition(),
                     (motorCDistance ==0) ? 0: motorC.getCurrentPosition(),
                     (motorDDistance ==0) ? 0: motorD.getCurrentPosition());
 
-            telemetry.update();
+            telemetry.update();*/
         }
 
         else {
 
             targetActive = false;
+
+            telemetry.addData("Status", "Reached target");
             currentActionIndex++;
 
             // Stop all motion;
@@ -497,15 +504,15 @@ public class OpMode_Robot extends OpMode {
             motorD.setPower(-turningSpeed);
         }
 
-        if (runtime.seconds() < 30000)
-        {
+        // if (runtime.seconds() < 300000)
+        //{
             int currentReading = this.gyro_sensor.getHeading();
             telemetry.addData("Target Angle", targetHeading);
             telemetry.addData("Current Angle", currentReading);
             String direction = "Clockwise"; if (clockwiseMotion == false) { direction="Counter Clockwise"; }
             telemetry.addData("Direction", direction);
             telemetry.update();
-            if (Math.abs(currentReading-targetHeading) <= 1)
+            if (Math.abs(currentReading-targetHeading) <= 2)
             {
                 targetActive = false;
                 currentActionIndex++;
@@ -514,6 +521,32 @@ public class OpMode_Robot extends OpMode {
                 motorC.setPower(0);
                 motorD.setPower(0);
             }
+        //}
+    }
+
+    public void sleepRobot(double milliSeconds)
+    {
+        if(!targetActive) {
+            setSleepTarget(milliSeconds);
+            targetActive = true;
+        }
+        else
+        {
+            sleepToTarget();
+        }
+    }
+
+    private void setSleepTarget(double milliSeconds)
+    {
+        runtime.reset();
+        sleepMilliseconds = milliSeconds;
+    }
+
+    private void sleepToTarget()
+    {
+        if(runtime.milliseconds() >= sleepMilliseconds) {
+            targetActive = false;
+            currentActionIndex++;
         }
     }
 }

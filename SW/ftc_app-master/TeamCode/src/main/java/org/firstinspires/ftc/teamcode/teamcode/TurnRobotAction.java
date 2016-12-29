@@ -11,6 +11,7 @@ public class TurnRobotAction implements IRobotAction {
 
     public TurnRobotAction(double turnSpeed, int degrees)
     {
+        this.robotActionMode = RobotActionModes.Turn;
         this.MotorSpeed = turnSpeed;
         this.Degrees = degrees;
     }

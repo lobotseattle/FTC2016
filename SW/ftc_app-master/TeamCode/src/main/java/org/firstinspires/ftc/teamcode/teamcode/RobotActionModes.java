@@ -9,5 +9,6 @@ public enum RobotActionModes {
     GoStraight,
     Turn,
     Shoot,
-    PressBeacon
+    PressBeacon,
+    Sleep
 }

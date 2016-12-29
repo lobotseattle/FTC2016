@@ -5,9 +5,9 @@ package org.firstinspires.ftc.teamcode.teamcode;
  */
 
 public interface IRobotAction {
-    RobotActionModes robotActionMode = RobotActionModes.GoStraight;
+    //RobotActionModes robotActionMode = RobotActionModes.None;
     //String Direction ="East";
-    double MotorSpeed = 1;
+    double MotorSpeed = 0.3;
     //double Distance = 20;
 
 }
