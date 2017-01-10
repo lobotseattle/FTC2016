@@ -4,7 +4,7 @@ package org.legionofbot.ftc;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 
-@Autonomous(name="DCMotor omnibot gamepad auto test", group="Linear Opmode")
+//@Autonomous(name="DCMotor omnibot gamepad auto test", group="Linear Opmode")
 public class DCMotor_omnibot_gamepad_auto_test extends DCMotor_2Wheel_Encoder2_4Wheels
 {
     boolean state = false;

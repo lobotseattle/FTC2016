@@ -8,7 +8,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import java.util.ArrayList;
 
 
-@Autonomous(name="Omnibot OpMode Auto", group="Opmode")
+//@Autonomous(name="Omnibot OpMode Auto", group="Opmode")
 public class Omnibot_OpMode_Auto extends OpMode_Robot
 {
     boolean state = false;

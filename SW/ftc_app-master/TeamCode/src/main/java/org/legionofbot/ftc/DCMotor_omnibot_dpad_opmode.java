@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
-@TeleOp(name="DCMotor omnibot gamepad dpad opmode", group="Linear Opmode")  // @Autonomous(...) is the other common choice
+//@TeleOp(name="DCMotor omnibot gamepad dpad opmode", group="Linear Opmode")  // @Autonomous(...) is the other common choice
 public class DCMotor_omnibot_dpad_opmode extends OpMode {
 
     /* Declare OpMode members. */

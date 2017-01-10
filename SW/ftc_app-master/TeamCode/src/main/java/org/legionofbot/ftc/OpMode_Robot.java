@@ -11,7 +11,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import java.util.ArrayList;
 
-@Autonomous(name="OpMode Robot", group="Linear Opmode")
+//@Autonomous(name="OpMode Robot", group="Linear Opmode")
 public class OpMode_Robot extends OpMode {
 
     DcMotor motorA = null;

@@ -8,7 +8,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import java.util.ArrayList;
 
 
-@Autonomous(name="DCMotor omnibot gamepad opMode auto test", group="Linear Opmode")
+//@Autonomous(name="DCMotor omnibot gamepad opMode auto test", group="Linear Opmode")
 public class DCMotor_omnibot_gamepad_opMode_auto_test  extends OpMode_Robot
 {
     boolean state = false;
