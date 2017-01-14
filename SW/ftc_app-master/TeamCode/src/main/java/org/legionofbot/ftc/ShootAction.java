@@ -6,11 +6,10 @@ package org.legionofbot.ftc;
 
 public class ShootAction implements IRobotAction {
     RobotActionModes robotActionMode = RobotActionModes.Shoot;
-    public String Direction;
     public double Speed ;
     double milliSeconds;
 
-    public ShootAction(String direction, double motorSpeed, double milliSeconds)
+    public ShootAction(double motorSpeed, double milliSeconds)
     {
         this.robotActionMode = RobotActionModes.Shoot;
         this.Speed = motorSpeed;

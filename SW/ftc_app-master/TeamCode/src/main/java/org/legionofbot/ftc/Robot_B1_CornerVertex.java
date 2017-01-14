@@ -11,9 +11,11 @@ public class Robot_B1_CornerVertex extends Omnibot_OpMode_Auto {
         double distance = 12;
 
         lstActions.add(new GoStraightRobotAction("South", motorSpeed, 50));
-        lstActions.add(new GoStraightRobotAction("West", motorSpeed, 10));
-        lstActions.add(new TurnRobotAction(turnSpeed, -10));
-        lstActions.add(new GoStraightRobotAction("North", motorSpeed +0.5, 70));
+        lstActions.add(new GoStraightRobotAction("West", motorSpeed, 9));
+        lstActions.add(new ShootAction(motorSpeed, 12));
+        lstActions.add(new GoStraightRobotAction("West", motorSpeed, 3));
+        lstActions.add(new TurnRobotAction(turnSpeed, 10));
+        lstActions.add(new GoStraightRobotAction("North", motorSpeed, 80));
      }
 }
 

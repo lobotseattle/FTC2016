@@ -54,7 +54,7 @@ public class DCMotor_omnibot_dpad extends LinearOpMode {
         motorCollector = hardwareMap.dcMotor.get("motor_collector");
         touch_sensor = hardwareMap.touchSensor.get("touch_sensor");
         servo1 = hardwareMap.servo.get("servo1");
-        servo1.setDirection(Servo.Direction.FORWARD);
+        servo1.setDirection(Servo.Direction.REVERSE);
 
         // eg: Set the driv
         // e motor directions:
@@ -115,7 +115,6 @@ public class DCMotor_omnibot_dpad extends LinearOpMode {
             {
                 servo1.setPosition(0);
             }
-
 
            /* if (ballpullstarted == false && triggerIsPressed == true)
             {

@@ -9,6 +9,9 @@ Robot_B1_CenterVertex extends Omnibot_OpMode_Auto {
     @Override
     public void registerActions() {
         lstActions.add(new GoStraightRobotAction("South", motorSpeed, 50));
-        lstActions.add(new GoStraightRobotAction("West", motorSpeed, 10));
+        lstActions.add(new GoStraightRobotAction("West", motorSpeed, 9));
+        lstActions.add(new ShootAction(motorSpeed, 12));
+        lstActions.add(new GoStraightRobotAction("West", motorSpeed, 3));
+        lstActions.add(new GoStraightRobotAction("South", motorSpeed, 7));
     }
 }

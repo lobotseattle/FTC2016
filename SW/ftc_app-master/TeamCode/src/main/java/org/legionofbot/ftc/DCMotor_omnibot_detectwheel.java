@@ -17,7 +17,8 @@ public class DCMotor_omnibot_detectwheel extends LinearOpMode
     DcMotor motorB = null;
     DcMotor motorC = null;
     DcMotor motorD = null;
-    DcMotor motorE = null;
+    DcMotor motorShooter = null;
+    DcMotor motorCollector = null;
     double motorSpeed = 0.1;
     // double spindleMotorPower = 0.5;
     // DcMotor shooterMotor = null;
@@ -36,7 +37,8 @@ public class DCMotor_omnibot_detectwheel extends LinearOpMode
         motorB = hardwareMap.dcMotor.get("motor_b");
         motorC = hardwareMap.dcMotor.get("motor_c");
         motorD = hardwareMap.dcMotor.get("motor_d");
-        motorE = hardwareMap.dcMotor.get("motor_shooter");
+        motorShooter = hardwareMap.dcMotor.get("motor_shooter");
+        motorCollector = hardwareMap.dcMotor.get("motor_collector");
 
         // eg: Set the drive motor directions:
         // "Reverse" the motor that runs backwards when connected directly to the battery
@@ -44,7 +46,8 @@ public class DCMotor_omnibot_detectwheel extends LinearOpMode
         motorB.setDirection(DcMotor.Direction.REVERSE);
         motorC.setDirection(DcMotor.Direction.REVERSE);
         motorD.setDirection(DcMotor.Direction.REVERSE);
-        motorE.setDirection(DcMotor.Direction.REVERSE);
+        motorShooter.setDirection(DcMotor.Direction.REVERSE);
+        motorCollector.setDirection(DcMotor.Direction.REVERSE);
 
         // boolean oldRBPressed = false;
         // boolean newRBPressed = false;
@@ -79,10 +82,16 @@ public class DCMotor_omnibot_detectwheel extends LinearOpMode
             motorD.setPower(motorSpeed);
             sleep(4000);
 
-            telemetry.addData("status", "Spinning motor E");
+            telemetry.addData("status", "Spinning motor shooter");
             telemetry.update();
             motorD.setPower(0);
-            motorE.setPower(motorSpeed);
+            motorShooter.setPower(motorSpeed);
+            sleep(4000);
+
+            telemetry.addData("status", "Spinning motor collector");
+            telemetry.update();
+            motorD.setPower(0);
+            motorCollector.setPower(motorSpeed);
             sleep(4000);
 
             break;
