@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
-@TeleOp(name="DCMotor omnibot gamepad dpad", group="Linear Opmode")  // @Autonomous(...) is the other common choice
+@TeleOp(name="DCMotor omnibot dpad", group="Linear Opmode")  // @Autonomous(...) is the other common choice
 public class DCMotor_omnibot_dpad extends LinearOpMode {
 
     /* Declare OpMode members. */
@@ -71,7 +71,7 @@ public class DCMotor_omnibot_dpad extends LinearOpMode {
         triggerIsPressed = false; // variable for if the right trigger was pressed
         sensorIsPressed = false; // variable for if the touch sensor is pressed
 
-        servo1.setPosition(1);
+        servo1.setPosition(0);
     }
 
     @Override
@@ -92,6 +92,10 @@ public class DCMotor_omnibot_dpad extends LinearOpMode {
             if (gamepad2.left_trigger > 0.0)
             {
                 motorCollector.setPower(collectorMotorSpeed);
+            }
+            else if (gamepad2.left_bumper)
+            {
+                motorCollector.setPower(-collectorMotorSpeed);
             }
             else {
 

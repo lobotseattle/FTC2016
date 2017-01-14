@@ -77,6 +77,7 @@ public class OpMode_Robot extends OpMode {
         motorC = hardwareMap.dcMotor.get("motor_c");
         motorD = hardwareMap.dcMotor.get("motor_d");
         shooterMotor = hardwareMap.dcMotor.get("motor_shooter");
+        shooterMotor.setDirection(DcMotor.Direction.REVERSE);
 
         telemetry.addData("Status", "Resetting Encoders");    //
         telemetry.update();

@@ -8,7 +8,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import java.util.ArrayList;
 
 
-//@Autonomous(name="Omnibot OpMode Auto", group="Opmode")
+@Autonomous(name="Auto Test", group="Opmode")
 public class Omnibot_OpMode_Auto extends OpMode_Robot
 {
     boolean state = false;
@@ -72,13 +72,10 @@ public class Omnibot_OpMode_Auto extends OpMode_Robot
         lstActions.add(new SleepAction(2));
         lstActions.add(new GoStraightRobotAction("West", motorSpeed, 12));
         lstActions.add(new SleepAction(2));
-        lstActions.add(new GoStraightRobotAction("NorthEast", motorSpeed, 12));
+        lstActions.add(new TurnRobotAction(turnSpeed, 90));
         lstActions.add(new SleepAction(2));
-        lstActions.add(new GoStraightRobotAction("SouthWest", motorSpeed, 12));
+        lstActions.add(new TurnRobotAction(turnSpeed, -90));
         lstActions.add(new SleepAction(2));
-        lstActions.add(new GoStraightRobotAction("SouthEast", motorSpeed, 12));
-        lstActions.add(new SleepAction(2));
-        lstActions.add(new GoStraightRobotAction("NorthWest", motorSpeed, 12));
 
     }
 

@@ -9,10 +9,10 @@ public class ShootAction implements IRobotAction {
     public double Speed ;
     double milliSeconds;
 
-    public ShootAction(double motorSpeed, double milliSeconds)
+    public ShootAction(double motorSpeed, double seconds)
     {
         this.robotActionMode = RobotActionModes.Shoot;
         this.Speed = motorSpeed;
-        this.milliSeconds = milliSeconds;
+        this.milliSeconds = seconds * 1000;
     }
 }

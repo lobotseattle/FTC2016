@@ -8,8 +8,8 @@ public class SleepAction implements IRobotAction {
     RobotActionModes robotActionMode = RobotActionModes.Sleep;
     double milliSeconds;
 
-    public SleepAction(double milliSeconds)
+    public SleepAction(double seconds)
     {
-        this.milliSeconds = milliSeconds;
+        this.milliSeconds = seconds * 1000;
     }
 }

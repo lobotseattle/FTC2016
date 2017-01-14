@@ -40,7 +40,10 @@ public class Robot_R2_CornerVertex extends Omnibot_OpMode_Auto {
     @Override
     public void registerActions() {
 
-        lstActions.add(new GoStraightRobotAction("West", motorSpeed, 75));
-        lstActions.add(new GoStraightRobotAction("North", motorSpeed, 70));
+        lstActions.add(new GoStraightRobotAction("South", motorSpeed, 72));
+        lstActions.add(new ShootAction(motorSpeed, 12));
+        lstActions.add(new GoStraightRobotAction("South", motorSpeed, 3));
+        lstActions.add(new GoStraightRobotAction("East", motorSpeed, 72));
+
     }
 }
